@@ -275,3 +275,149 @@ export const ComplexForm: Story = {
 		},
 	},
 };
+
+/**
+ * T104: Decorator example (Phase 5)
+ * Demonstrates @ControlType decorator to use textarea instead of text input
+ */
+export const WithControlTypeDecorator: Story = {
+	args: {
+		schema: (() => {
+			// Manually create a schema that simulates decorator application
+			const titleField = TypeParser.parseType('title', { kind: 'string', required: true });
+			// Simulate @ControlType('textarea') decorator
+			titleField.controlType = 'textarea';
+			
+			const descriptionField = TypeParser.parseType('description', { kind: 'string', required: false });
+			descriptionField.controlType = 'textarea';
+			descriptionField.placeholder = 'Enter a detailed description...';
+			descriptionField.helpText = 'Provide a comprehensive description of your content';
+
+			const fields = [titleField, descriptionField];
+
+			return SchemaBuilder.buildSchema('Article', fields, {
+				title: 'Article Editor (with @ControlType)',
+				description: 'Demonstrating controlType override for textarea fields',
+			});
+		})(),
+		initialValues: {
+			title: 'Understanding React Forms',
+			description: 'This article explores the various approaches to building forms in React applications.',
+		},
+		onSubmit: (values) => {
+			console.log('Form submitted:', values);
+			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
+		},
+	},
+};
+
+/**
+ * T105: Custom validation example (Phase 5)
+ * Demonstrates custom validator functions with error messages
+ */
+export const WithCustomValidation: Story = {
+	args: {
+		schema: (() => {
+			const usernameField = TypeParser.parseType('username', { kind: 'string', required: true });
+			usernameField.validators = [
+				{
+					type: 'minLength',
+					value: 3,
+					message: 'Username must be at least 3 characters',
+				},
+				{
+					type: 'custom',
+					message: 'Username can only contain letters, numbers, and underscores',
+					validator: (value) => {
+						if (typeof value !== 'string') return false;
+						return /^[a-zA-Z0-9_]+$/.test(value);
+					},
+				},
+			];
+
+			const passwordField = TypeParser.parseType('password', { kind: 'string', required: true });
+			passwordField.validators = [
+				{
+					type: 'minLength',
+					value: 8,
+					message: 'Password must be at least 8 characters',
+				},
+				{
+					type: 'custom',
+					message: 'Password must contain at least one uppercase, one lowercase, and one number',
+					validator: (value) => {
+						if (typeof value !== 'string') return false;
+						return /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value);
+					},
+				},
+			];
+
+			const emailField = TypeParser.parseType('email', { kind: 'string', required: true });
+			emailField.validators = [
+				{
+					type: 'email',
+					message: 'Please enter a valid email address',
+				},
+			];
+
+			const fields = [usernameField, passwordField, emailField];
+
+			return SchemaBuilder.buildSchema('UserRegistration', fields, {
+				title: 'User Registration (with Custom Validation)',
+				description: 'Try submitting with invalid data to see custom validation messages',
+			});
+		})(),
+		initialValues: {
+			username: '',
+			password: '',
+			email: '',
+		},
+		onSubmit: (values) => {
+			console.log('Form submitted:', values);
+			alert(`Registration successful!\n${JSON.stringify(values, null, 2)}`);
+		},
+	},
+};
+
+/**
+ * T107: Custom styling example (Phase 5)
+ * Demonstrates className and style props on fields
+ */
+export const WithCustomStyling: Story = {
+	args: {
+		schema: (() => {
+			const nameField = TypeParser.parseType('name', { kind: 'string', required: true });
+			nameField.className = 'custom-name-field';
+			nameField.style = { backgroundColor: '#f0f8ff', padding: '12px' };
+
+			const emailField = TypeParser.parseType('email', { kind: 'string', required: true });
+			emailField.className = 'custom-email-field';
+			emailField.style = { border: '2px solid #4CAF50', borderRadius: '8px' };
+
+			const bioField = TypeParser.parseType('bio', { kind: 'string', required: false });
+			bioField.controlType = 'textarea';
+			bioField.className = 'custom-bio-field';
+			bioField.style = { 
+				backgroundColor: '#fffacd',
+				fontFamily: 'Georgia, serif',
+				fontSize: '16px',
+			};
+
+			const fields = [nameField, emailField, bioField];
+
+			return SchemaBuilder.buildSchema('StyledProfile', fields, {
+				title: 'Styled Profile Form',
+				description: 'Fields with custom className and style props',
+			});
+		})(),
+		initialValues: {
+			name: 'Grace Hopper',
+			email: 'grace@example.com',
+			bio: 'Computer scientist and United States Navy rear admiral.',
+		},
+		onSubmit: (values) => {
+			console.log('Form submitted:', values);
+			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
+		},
+	},
+};

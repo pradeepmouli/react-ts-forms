@@ -50,14 +50,57 @@ export const userProfileConfig = defineFormConfig<UserProfile>({
 });
 ```
 
-### Decorators for class-based models (preview)
+### Decorators for class-based models (Phase 5) ✓
 
 Decorators apply only to class properties. Interfaces and type aliases should use `FormConfig<T>` as shown above.
 
 ```ts
-// import { Label, Placeholder, Validate } from 'react-ts-forms';
-// class User { @Label('Full name') name!: string; @Validate({ type: 'email', message: 'Invalid' }) email!: string }
-// // Pending implementation; see spec for details.
+import { Label, Placeholder, HelpText, Validate, ControlType, CustomControl } from 'react-ts-forms';
+
+class UserRegistration {
+  @Label('Full Name')
+  @Placeholder('Enter your full name')
+  @Validate({ type: 'minLength', value: 2, message: 'Name is too short' })
+  name!: string;
+
+  @Label('Email Address')
+  @Validate({ type: 'email', message: 'Invalid email address' })
+  email!: string;
+
+  @ControlType('textarea')
+  @HelpText('Tell us a bit about yourself')
+  bio?: string;
+
+  @Validate({ type: 'min', value: 18, message: 'Must be 18 or older' })
+  age!: number;
+
+  @Validate({
+    type: 'custom',
+    message: 'Password must contain uppercase, lowercase, and number',
+    validator: (value) => /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value as string)
+  })
+  password!: string;
+}
+```
+
+**Available Decorators:**
+- `@Label(text)` - Set custom field label
+- `@Placeholder(text)` - Set placeholder text
+- `@HelpText(text)` - Add help text below field
+- `@Validate(rule)` - Add validation rules (can use multiple times)
+- `@ControlType(type)` - Override control type (e.g., 'textarea', 'select')
+- `@CustomControl(Component)` - Use custom React component
+- `@UnionControl('radio' | 'select')` - Force union selector type
+
+**Custom Validators:**
+```ts
+@Validate({
+  type: 'custom',
+  message: 'Error message',
+  validator: (value, allValues) => boolean | Promise<boolean>,
+  async: true, // Optional, for async validators
+  timing: 'blur' // When to run: 'change' | 'blur' | 'submit'
+})
 ```
 
 ## Precedence rules
@@ -73,9 +116,9 @@ This order is enforced during schema construction.
 ## Roadmap (high level)
 
 - Phase 2: Foundational (types, registry) ✓
-- Phase 3: MVP (parser, schema builder, text/number/checkbox/object fields, basic validation)
-- Phase 4: Complex types (arrays, enums, unions, dates)
-- Phase 5: Customization & styling (decorators, custom components, CSS tokens)
+- Phase 3: MVP (parser, schema builder, text/number/checkbox/object fields, basic validation) ✓
+- Phase 4: Complex types (arrays, enums, unions, dates) ✓
+- Phase 5: Customization & styling (decorators, custom components, CSS tokens) ✓
 - Phase 6: Advanced (recursive, readonly, deep nesting)
 - Phase 7: Vite plugin (build-time automation)
 - Phase 8: Polish (a11y sweep, performance, docs, packaging)
@@ -91,10 +134,12 @@ For detailed tasks, see `specs/001-type-driven-form/tasks.md`.
 ## Contributing
 
 - Tests-first: write failing tests before implementation (Vitest + RTL + axe)
-- Lint/format: oxlint/oxfmt (to be wired in setup tasks)
-- Commands (planned):
+- Lint/format: oxlint/oxfmt
+- Commands:
   - `npm test`
   - `npm run lint`
+  - `npm run build`
+  - `npm run storybook`
 
 See `specs/001-type-driven-form/` for the spec, plan, research, data model, and API contracts.
 
