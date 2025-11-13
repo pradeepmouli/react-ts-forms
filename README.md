@@ -113,13 +113,62 @@ When combining sources, later entries win:
 
 This order is enforced during schema construction.
 
+## Advanced Features (Phase 6)
+
+### Recursive Types
+
+Forms support recursive data structures like trees with lazy expansion:
+
+```ts
+interface TreeNode {
+  label: string;
+  value: string;
+  children?: TreeNode[];  // Recursive reference
+}
+```
+
+The TypeParser automatically detects circular references and creates expandable UI:
+- Click to expand/collapse recursive instances
+- Visual hierarchy with depth-based indentation
+- ARIA-compliant with `aria-expanded` states
+
+### Readonly Fields
+
+Mark fields as readonly to prevent user edits:
+
+```ts
+const schema = SchemaBuilder.buildSchema('User', [
+  TypeParser.parseType('id', { kind: 'string', readonly: true }),
+  TypeParser.parseType('email', { kind: 'string', readonly: true }),
+  TypeParser.parseType('name', { kind: 'string' }), // Editable
+]);
+```
+
+Readonly fields render as disabled inputs with visual indicators.
+
+### Generic Type Resolution
+
+TypeParser can resolve generic type parameters:
+
+```ts
+const listType = {
+  kind: 'array',
+  elementType: { kind: 'generic', name: 'T' }
+};
+
+const resolved = TypeParser.resolveGenerics(listType, {
+  T: { kind: 'string' }
+});
+// Results in: array of string
+```
+
 ## Roadmap (high level)
 
 - Phase 2: Foundational (types, registry) ✓
 - Phase 3: MVP (parser, schema builder, text/number/checkbox/object fields, basic validation) ✓
 - Phase 4: Complex types (arrays, enums, unions, dates) ✓
 - Phase 5: Customization & styling (decorators, custom components, CSS tokens) ✓
-- Phase 6: Advanced (recursive, readonly, deep nesting)
+- Phase 6: Advanced (recursive types, readonly fields, generic resolution) ✓
 - Phase 7: Vite plugin (build-time automation)
 - Phase 8: Polish (a11y sweep, performance, docs, packaging)
 

@@ -32,6 +32,7 @@ export interface FormGeneratorProps<T = Record<string, unknown>> {
 
 /**
  * T036: Form state management hook
+ * T117: Enhanced with recursive field toggle
  * Manages values, errors, touched, submitted state
  */
 function useFormState<T = Record<string, unknown>>(
@@ -43,6 +44,7 @@ function useFormState<T = Record<string, unknown>>(
 	markTouched: (path: string) => void;
 	validateAll: () => boolean;
 	resetForm: () => void;
+	toggleRecursive: (path: string) => void;
 } {
 	const [state, setState] = React.useState<FormState<T>>(() => ({
 		values: (initialValues || {}) as T,

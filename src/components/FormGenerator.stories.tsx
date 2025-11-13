@@ -421,3 +421,106 @@ export const WithCustomStyling: Story = {
 		},
 	},
 };
+
+/**
+ * T125: Recursive type example (Phase 6)
+ * Demonstrates recursive types with expand/collapse UI (TreeNode example)
+ */
+export const WithRecursiveTypes: Story = {
+	args: {
+		schema: (() => {
+			// Create a TreeNode type with recursive children
+			const treeNodeType: TypeInfo = {
+				kind: 'object',
+				name: 'TreeNode',
+				properties: {
+					label: { kind: 'string', required: true },
+					value: { kind: 'string', required: true },
+					// Recursive reference - children is an array of TreeNode
+					children: { 
+						kind: 'array',
+						elementType: {
+							kind: 'object',
+							name: 'TreeNode', // Same type name triggers recursion detection
+							properties: {
+								label: { kind: 'string', required: true },
+								value: { kind: 'string', required: true },
+							},
+						},
+					},
+				},
+			};
+
+			const rootField = TypeParser.parseType('root', treeNodeType);
+
+			return SchemaBuilder.buildSchema('TreeStructure', [rootField], {
+				title: 'Tree Structure (Recursive Type)',
+				description: 'Click the expand buttons to reveal nested tree nodes',
+			});
+		})(),
+		initialValues: {
+			root: {
+				label: 'Root',
+				value: 'root',
+				children: [
+					{
+						label: 'Child 1',
+						value: 'child1',
+						children: [],
+					},
+					{
+						label: 'Child 2',
+						value: 'child2',
+						children: [],
+					},
+				],
+			},
+		},
+		onSubmit: (values) => {
+			console.log('Form submitted:', values);
+			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
+		},
+	},
+};
+
+/**
+ * T126: Readonly field example (Phase 6)
+ * Demonstrates readonly/disabled fields
+ */
+export const WithReadonlyFields: Story = {
+	args: {
+		schema: (() => {
+			const idField = TypeParser.parseType('id', { kind: 'string', required: true, readonly: true });
+			idField.helpText = 'This field is read-only';
+
+			const usernameField = TypeParser.parseType('username', { kind: 'string', required: true });
+			
+			const emailField = TypeParser.parseType('email', { kind: 'string', required: true, readonly: true });
+			emailField.helpText = 'Email cannot be changed';
+
+			const rolesField = TypeParser.parseType('roles', {
+				kind: 'array',
+				elementType: { kind: 'string' },
+				readonly: true,
+			});
+			rolesField.helpText = 'Roles are managed by administrators';
+
+			const fields = [idField, usernameField, emailField, rolesField];
+
+			return SchemaBuilder.buildSchema('UserProfile', fields, {
+				title: 'User Profile (with Readonly Fields)',
+				description: 'Some fields are read-only and cannot be edited',
+			});
+		})(),
+		initialValues: {
+			id: 'user-12345',
+			username: 'ada_lovelace',
+			email: 'ada@example.com',
+			roles: ['developer', 'admin'],
+		},
+		onSubmit: (values) => {
+			console.log('Form submitted:', values);
+			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
+		},
+	},
+};
