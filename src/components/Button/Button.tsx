@@ -1,5 +1,5 @@
-import React, { forwardRef } from 'react';
 import type { ButtonHTMLAttributes } from 'react';
+import React, { forwardRef } from 'react';
 import type { ButtonProps } from './types';
 
 /**

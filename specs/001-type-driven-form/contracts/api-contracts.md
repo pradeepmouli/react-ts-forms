@@ -10,8 +10,8 @@ This document defines the public API contracts for the Type-Driven Form Generato
 
 ## 1. FormGenerator Component Props
 
-**Contract Type**: React Component Public API  
-**Stability**: MAJOR version changes only  
+**Contract Type**: React Component Public API
+**Stability**: MAJOR version changes only
 **Introduced**: v1.0.0
 
 ```typescript
@@ -21,65 +21,65 @@ interface FormGeneratorProps<T extends Record<string, unknown>> {
    * Type must be serializable to FormSchema at build-time.
    */
   schema: FormSchema;
-  
+
   /**
    * Initial values for form fields.
    * Structure must match the input type T.
    */
   initialValues?: Partial<T>;
-  
+
   /**
    * Callback invoked when any field value changes.
    * Receives the complete form values object (strongly typed to T).
    */
   onChange?: (values: T, changedField: string) => void;
-  
+
   /**
    * Callback invoked when form is submitted and passes validation.
    * Receives the complete form values object (strongly typed to T).
    */
   onSubmit: (values: T) => void | Promise<void>;
-  
+
   /**
    * Callback invoked when validation fails.
    * Receives map of field paths to error messages.
    */
   onError?: (errors: Record<string, string[]>) => void;
-  
+
   /**
    * Whether to validate fields live (after first blur) or only on submit.
    * Default: 'blur' (react-jsonschema-form pattern)
    */
   validationMode?: 'blur' | 'change' | 'submit';
-  
+
   /**
    * Custom CSS classes to apply to form container.
    */
   className?: string;
-  
+
   /**
    * Custom inline styles for form container.
    */
   style?: React.CSSProperties;
-  
+
   /**
    * Whether to show submit button.
    * Default: true
    */
   showSubmitButton?: boolean;
-  
+
   /**
    * Custom text for submit button.
    * Default: "Submit"
    */
   submitButtonText?: string;
-  
+
   /**
    * Whether form is disabled (all fields readonly).
    * Default: false
    */
   disabled?: boolean;
-  
+
   /**
    * ARIA label for the form element.
    */
@@ -97,8 +97,8 @@ interface FormGeneratorProps<T extends Record<string, unknown>> {
 
 ## 2. Decorator API
 
-**Contract Type**: TypeScript Decorators  
-**Stability**: MAJOR version changes only  
+**Contract Type**: TypeScript Decorators
+**Stability**: MAJOR version changes only
 **Introduced**: v1.0.0
 
 ### @Label
@@ -106,9 +106,9 @@ interface FormGeneratorProps<T extends Record<string, unknown>> {
 ```typescript
 /**
  * Customizes the display label for a field.
- * 
+ *
  * @param label - Custom label text
- * 
+ *
  * @example
  * class UserProfile {
  *   @Label('Email Address')
@@ -123,9 +123,9 @@ function Label(label: string): PropertyDecorator;
 ```typescript
 /**
  * Sets placeholder text for input controls.
- * 
+ *
  * @param placeholder - Placeholder text
- * 
+ *
  * @example
  * class UserProfile {
  *   @Placeholder('Enter your email')
@@ -140,9 +140,9 @@ function Placeholder(placeholder: string): PropertyDecorator;
 ```typescript
 /**
  * Adds help text displayed below the field.
- * 
+ *
  * @param helpText - Help text content
- * 
+ *
  * @example
  * class UserProfile {
  *   @HelpText('We will never share your email')
@@ -157,15 +157,15 @@ function HelpText(helpText: string): PropertyDecorator;
 ```typescript
 /**
  * Adds custom validation rule to a field.
- * 
+ *
  * @param validator - Validation function or built-in validator config
  * @param message - Error message when validation fails
- * 
+ *
  * @example
  * class UserProfile {
  *   @Validate((value) => value.includes('@'), 'Must be a valid email')
  *   email: string;
- *   
+ *
  *   @Validate({ min: 18 }, 'Must be at least 18')
  *   age: number;
  * }
@@ -177,7 +177,7 @@ function Validate(
 
 type ValidatorFn = (value: unknown, allValues: Record<string, unknown>) => boolean | Promise<boolean>;
 
-type ValidatorConfig = 
+type ValidatorConfig =
   | { min: number }
   | { max: number }
   | { minLength: number }
@@ -192,9 +192,9 @@ type ValidatorConfig =
 ```typescript
 /**
  * Replaces default input control with custom component.
- * 
+ *
  * @param component - React component that accepts FieldProps
- * 
+ *
  * @example
  * class UserProfile {
  *   @CustomControl(RichTextEditor)
@@ -206,25 +206,25 @@ function CustomControl(component: React.ComponentType<FieldProps>): PropertyDeco
 interface FieldProps {
   /** Field name */
   name: string;
-  
+
   /** Current field value */
   value: unknown;
-  
+
   /** Change handler */
   onChange: (value: unknown) => void;
-  
+
   /** Blur handler */
   onBlur: () => void;
-  
+
   /** Field definition from schema */
   field: FieldDefinition;
-  
+
   /** Validation errors for this field */
   errors?: string[];
-  
+
   /** Whether field has been touched */
   touched: boolean;
-  
+
   /** Whether field is disabled */
   disabled: boolean;
 }
@@ -235,9 +235,9 @@ interface FieldProps {
 ```typescript
 /**
  * Specifies which UI control to use for a field.
- * 
+ *
  * @param controlType - Control type name
- * 
+ *
  * @example
  * class UserProfile {
  *   @ControlType('textarea')
@@ -255,9 +255,9 @@ type ControlTypeName = 'text' | 'number' | 'checkbox' | 'select' | 'radio' | 'da
 /**
  * Specifies control type for union type selector.
  * Only applicable to union type fields.
- * 
+ *
  * @param controlType - 'radio' or 'select'
- * 
+ *
  * @example
  * class UserProfile {
  *   @UnionControl('radio')
@@ -277,21 +277,21 @@ function UnionControl(controlType: 'radio' | 'select'): PropertyDecorator;
 
 ## 3. Vite Plugin API
 
-**Contract Type**: Bundler Plugin Public API  
-**Stability**: MAJOR version changes only  
+**Contract Type**: Bundler Plugin Public API
+**Stability**: MAJOR version changes only
 **Introduced**: v1.0.0
 
 ```typescript
 /**
  * Vite plugin for type-driven form generation.
  * Analyzes TypeScript types at build-time and generates FormSchema.
- * 
+ *
  * @param options - Plugin configuration
- * 
+ *
  * @example
  * // vite.config.ts
  * import { typeFormPlugin } from 'react-ts-forms/vite';
- * 
+ *
  * export default {
  *   plugins: [
  *     typeFormPlugin({
@@ -309,19 +309,19 @@ interface TypeFormPluginOptions {
    * Default: ['** /*.ts', '** /*.tsx']
    */
   include?: string[];
-  
+
   /**
    * Glob patterns for files to exclude.
    * Default: ['** /*.test.ts', '** /*.test.tsx', 'node_modules/** /*']
    */
   exclude?: string[];
-  
+
   /**
    * Whether to emit build-time performance metrics.
    * Default: false
    */
   debug?: boolean;
-  
+
   /**
    * Path to tsconfig.json.
    * Default: 'tsconfig.json'
@@ -340,8 +340,8 @@ interface TypeFormPluginOptions {
 
 ## 4. FormSchema Type Definition
 
-**Contract Type**: Data Structure Public API  
-**Stability**: MAJOR version changes only  
+**Contract Type**: Data Structure Public API
+**Stability**: MAJOR version changes only
 **Introduced**: v1.0.0
 
 ```typescript
@@ -408,8 +408,8 @@ type ValidationType = 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | '
 
 ## 5. CSS Custom Properties (Design Tokens)
 
-**Contract Type**: Styling Public API  
-**Stability**: MAJOR version changes only  
+**Contract Type**: Styling Public API
+**Stability**: MAJOR version changes only
 **Introduced**: v1.0.0
 
 ```css
@@ -485,8 +485,8 @@ type ValidationType = 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | '
 
 ## 6. Peer Dependencies
 
-**Contract Type**: Dependency Requirements  
-**Stability**: MAJOR version changes only  
+**Contract Type**: Dependency Requirements
+**Stability**: MAJOR version changes only
 **Introduced**: v1.0.0
 
 ```json

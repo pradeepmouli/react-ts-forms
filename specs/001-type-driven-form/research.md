@@ -122,7 +122,7 @@
 - **Segmented control**: iOS-style toggle for 2-3 variants (not native HTML, requires custom styling)
 - **Type inference**: Some tools try to infer type from input (error-prone, confusing)
 
-**Decision**: 
+**Decision**:
 - Use **radio buttons** for unions with ≤4 variants
 - Use **select dropdown** for unions with >4 variants
 - Once variant selected, show appropriate input control for that type

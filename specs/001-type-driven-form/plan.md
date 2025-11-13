@@ -27,7 +27,7 @@ A React component that accepts a TypeScript type or interface definition and gen
 
 The following MUST be validated against the constitution before proceeding:
 
-1. **Accessibility & UX**: 
+1. **Accessibility & UX**:
    - ✅ All form controls will have ARIA labels (aria-label, aria-describedby for errors, aria-required, aria-invalid)
    - ✅ Keyboard navigation: Tab order for fields, Enter to submit, Space for checkboxes/radios, Arrow keys for radio groups and select dropdowns
    - ✅ Focus management: Autofocus on first invalid field after submission, visible focus indicators (CSS :focus-visible)
@@ -37,14 +37,14 @@ The following MUST be validated against the constitution before proceeding:
    - ✅ Recursive types: Expand/collapse controls with ARIA expanded state and keyboard support
    - ✅ Union types: Type selector (radio group or select) with proper ARIA semantics before conditional input appears
 
-2. **API Stability**: 
+2. **API Stability**:
    - ✅ Public API: Component props (type definition input, onChange callback, onSubmit, decorators API)
    - ✅ Decorator API: @FormField, @Validate, @Label, @Placeholder, @CustomControl - these are MAJOR version contracts
    - ✅ Breaking changes: Any decorator signature change, prop removal, or type introspection behavior change requires MAJOR bump
    - ✅ Migration notes: Will document decorator migration path if API evolves
    - ✅ CSS variables: Form control styling uses --rtsf-* prefixed variables (stable public contract)
 
-3. **Test Strategy**: 
+3. **Test Strategy**:
    - ✅ Unit tests: Type parser (handles primitives, arrays, objects, enums, unions, recursive types), decorator extractor, validation engine
    - ✅ Integration tests: Full form rendering from TypeScript type, form submission with typed data output, validation error display
    - ✅ Interaction tests: Add/remove array items, reorder array items, expand/collapse recursive fields, select union type variant
@@ -58,12 +58,12 @@ The following MUST be validated against the constitution before proceeding:
      | ValidationEngine | ✓ | ✓ | - | - |
      | DecoratorProcessor | ✓ | ✓ | - | - |
 
-4. **Documentation**: 
+4. **Documentation**:
    - ✅ Storybook stories plan:
      - Primary: Simple form (user profile type)
      - Variants: Arrays, nested objects, enums, unions, dates, recursive types, validation errors
      - Accessibility: Keyboard navigation demo, screen reader announcement demo, error state demo
-   - ✅ README updates: 
+   - ✅ README updates:
      - Quick start (basic usage example)
      - Decorator API reference
      - Build configuration (TypeScript compiler API or Vite plugin setup)
@@ -72,7 +72,7 @@ The following MUST be validated against the constitution before proceeding:
    - ✅ Prop tables: Auto-generated from TypeScript types in Storybook
    - ✅ Changelog entry: Features (type-driven generation, decorator customization), breaking changes (N/A for v1.0.0)
 
-5. **Performance**: 
+5. **Performance**:
    - ✅ Bundle size budget: Core library <15KB gzipped (per SC-007)
    - ✅ Tree-shakeable: ESM exports, no side-effect imports
    - ✅ Memoization plan:
@@ -83,12 +83,12 @@ The following MUST be validated against the constitution before proceeding:
    - ✅ Lazy expansion: Recursive type fields render expand button, not full nested tree initially
    - ✅ Large forms: Virtual scrolling or pagination if >100 fields (out of scope for MVP, noted for future)
 
-6. **Governance**: 
+6. **Governance**:
    - ✅ Release impact: v1.0.0 - first major release of type-driven form generator feature
    - ✅ No deferrals: All gates can be satisfied in initial implementation
    - ✅ TODOs scoped: Any temporary TODO comments will include owner + deadline ≤ 2 weeks
 
-7. **Compliance**: 
+7. **Compliance**:
    - ✅ No unstable APIs: Using stable TypeScript compiler API, stable React APIs (hooks, forwardRef)
    - ✅ Decorator support: Requires experimentalDecorators in tsconfig.json (documented assumption)
    - ✅ Build-time only: No runtime type introspection (avoids reflect-metadata or runtime decorators)

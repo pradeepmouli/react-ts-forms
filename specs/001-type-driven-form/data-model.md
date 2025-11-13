@@ -13,19 +13,19 @@
 interface FormSchema {
   /** Unique identifier for the schema (typically the type name) */
   id: string;
-  
+
   /** Human-readable title for the form (defaults to type name) */
   title: string;
-  
+
   /** Optional description for the form */
   description?: string;
-  
+
   /** Root fields in the form */
   fields: FieldDefinition[];
-  
+
   /** Global validation rules that apply to the entire form */
   globalValidators?: ValidationRule[];
-  
+
   /** Metadata from type-level decorators */
   metadata?: Record<string, unknown>;
 }
@@ -53,80 +53,80 @@ interface FormSchema {
 interface FieldDefinition {
   /** Field name (matches TypeScript property name) */
   name: string;
-  
+
   /** Field type (primitive, array, object, enum, union, etc.) */
   type: FieldType;
-  
+
   /** Display label (defaults to formatted name) */
   label: string;
-  
+
   /** Whether the field is required (from TypeScript type annotation) */
   required: boolean;
-  
+
   /** Whether the field is readonly */
   readonly: boolean;
-  
+
   /** Default value for the field */
   defaultValue?: unknown;
-  
+
   /** Placeholder text for input controls */
   placeholder?: string;
-  
+
   /** Help text displayed below the field */
   helpText?: string;
-  
+
   /** Validation rules for this field */
   validators?: ValidationRule[];
-  
+
   /** UI control type (text, number, select, etc.) */
   controlType?: ControlType;
-  
+
   /** Custom component to render instead of default control */
   customComponent?: React.ComponentType<FieldProps>;
-  
+
   /** For object types: nested field definitions */
   nestedFields?: FieldDefinition[];
-  
+
   /** For array types: definition of array item fields */
   arrayItemDefinition?: FieldDefinition;
-  
+
   /** For enum/union types: possible values */
   enumValues?: Array<{ value: unknown; label: string }>;
-  
+
   /** For union types: definitions for each variant */
   unionVariants?: FieldDefinition[];
-  
+
   /** For recursive types: reference to parent type to enable lazy expansion */
   recursiveTypeRef?: string;
-  
+
   /** Custom CSS classes */
   className?: string;
-  
+
   /** Custom inline styles */
   style?: React.CSSProperties;
-  
+
   /** Additional metadata from decorators */
   metadata?: Record<string, unknown>;
 }
 
-type FieldType = 
-  | 'string' 
-  | 'number' 
-  | 'boolean' 
-  | 'date' 
-  | 'enum' 
-  | 'array' 
-  | 'object' 
+type FieldType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'date'
+  | 'enum'
+  | 'array'
+  | 'object'
   | 'union'
   | 'recursive';
 
-type ControlType = 
-  | 'text' 
-  | 'number' 
-  | 'checkbox' 
-  | 'select' 
-  | 'radio' 
-  | 'date' 
+type ControlType =
+  | 'text'
+  | 'number'
+  | 'checkbox'
+  | 'select'
+  | 'radio'
+  | 'date'
   | 'textarea'
   | 'custom';
 ```
@@ -162,34 +162,34 @@ type ControlType =
 interface FormState<T = Record<string, unknown>> {
   /** Current field values (strongly typed to match input type) */
   values: T;
-  
+
   /** Validation errors keyed by field name (dot notation for nested fields) */
   errors: Record<string, string[]>;
-  
+
   /** Fields that have been touched (blurred at least once) */
   touched: Set<string>;
-  
+
   /** Fields currently being validated asynchronously */
   validating: Set<string>;
-  
+
   /** Whether the form has been submitted at least once */
   submitted: boolean;
-  
+
   /** Whether the form is currently submitting */
   submitting: boolean;
-  
+
   /** Whether the entire form is valid (derived from errors) */
   isValid: boolean;
-  
+
   /** Whether the form has been modified from initial values */
   isDirty: boolean;
-  
+
   /** For array fields: expanded state (which items are showing nested fields) */
   expandedArrayItems: Record<string, Set<number>>;
-  
+
   /** For recursive fields: expanded state (which nested levels are visible) */
   expandedRecursiveFields: Set<string>;
-  
+
   /** For union fields: selected variant type keyed by field name */
   selectedUnionVariants: Record<string, string>;
 }
@@ -207,7 +207,7 @@ interface FormState<T = Record<string, unknown>> {
 - `isValid` is always `Object.keys(errors).length === 0`
 - `isDirty` is always `values !== initialValues` (deep equality check)
 
-**Lifecycle**: 
+**Lifecycle**:
 - Initialized when FormGenerator mounts (values from `defaultValue` or type defaults)
 - Updated on every user interaction (onChange, onBlur)
 - Validated after first blur per field (touched) or on submit
@@ -224,34 +224,34 @@ interface FormState<T = Record<string, unknown>> {
 interface ValidationRule {
   /** Validation rule type */
   type: ValidationType;
-  
+
   /** Error message to display when validation fails */
   message: string;
-  
+
   /** For min/max validators: threshold value */
   value?: number;
-  
+
   /** For pattern validator: regex pattern */
   pattern?: RegExp;
-  
+
   /** For custom validators: validation function */
   validator?: (value: unknown, allValues: Record<string, unknown>) => boolean | Promise<boolean>;
-  
+
   /** Whether this validator runs asynchronously */
   async?: boolean;
-  
+
   /** Validation timing: 'change' | 'blur' | 'submit' */
   timing?: ValidationTiming;
 }
 
-type ValidationType = 
-  | 'required' 
-  | 'min' 
-  | 'max' 
-  | 'minLength' 
-  | 'maxLength' 
-  | 'pattern' 
-  | 'email' 
+type ValidationType =
+  | 'required'
+  | 'min'
+  | 'max'
+  | 'minLength'
+  | 'maxLength'
+  | 'pattern'
+  | 'email'
   | 'url'
   | 'custom';
 
@@ -270,7 +270,7 @@ type ValidationTiming = 'change' | 'blur' | 'submit';
 - `timing` defaults to `'blur'` (react-jsonschema-form pattern)
 - `async` defaults to `false`
 
-**Lifecycle**: 
+**Lifecycle**:
 - Created at build-time from TypeScript type constraints + decorators
 - Executed at runtime during validation phase (onChange, onBlur, onSubmit)
 - Immutable after creation
@@ -286,34 +286,34 @@ type ValidationTiming = 'change' | 'blur' | 'submit';
 interface FieldOverride {
   /** Target field path (dot notation for nested fields) */
   fieldPath: string;
-  
+
   /** Custom label */
   label?: string;
-  
+
   /** Custom placeholder */
   placeholder?: string;
-  
+
   /** Custom help text */
   helpText?: string;
-  
+
   /** Additional validation rules */
   validators?: ValidationRule[];
-  
+
   /** Custom control type */
   controlType?: ControlType;
-  
+
   /** Custom component */
   customComponent?: React.ComponentType<FieldProps>;
-  
+
   /** Custom CSS classes */
   className?: string;
-  
+
   /** Custom inline styles */
   style?: React.CSSProperties;
-  
+
   /** For union fields: force specific selector control */
   unionControlType?: 'radio' | 'select';
-  
+
   /** Additional metadata */
   metadata?: Record<string, unknown>;
 }
@@ -330,7 +330,7 @@ interface FieldOverride {
 - `customComponent` must accept `FieldProps` interface
 - `unionControlType` only valid for union type fields
 
-**Lifecycle**: 
+**Lifecycle**:
 - Created at build-time by DecoratorProcessor from decorator metadata
 - Applied to `FieldDefinition` during schema building
 - Overrides take precedence over inferred values from TypeScript types

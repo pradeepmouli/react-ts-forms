@@ -1,8 +1,8 @@
 # Feature Specification: Type-Driven Form Generator
 
-**Feature Branch**: `001-type-driven-form`  
-**Created**: 2025-11-12  
-**Status**: Draft  
+**Feature Branch**: `001-type-driven-form`
+**Created**: 2025-11-12
+**Status**: Draft
 **Input**: User description: "A react component that given a typescript type or interface, will dynamically at bundle time (or optionally statically) generate a react form akin to react-jsonschema-form"
 
 ## Clarifications
@@ -133,4 +133,3 @@ A developer wants forms that match their application's design system. They need 
 - Form submission handling (HTTP requests, state management) is the developer's responsibility; this component focuses on UI generation and data collection.
 - Type definitions are analyzed at build-time via TypeScript compiler API or bundler integration.
 - Decorators are used for all type-level configuration including control type selection, custom components, labels, placeholders, validation rules, and styling.
-

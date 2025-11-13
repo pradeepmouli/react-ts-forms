@@ -248,7 +248,7 @@ class UserProfile {
 }
 ```
 
-**Result**: 
+**Result**:
 - accountType: Select dropdown with options "Free", "Premium", "Enterprise"
 - contactPreference: Radio button group with options "Email", "Phone", "SMS"
 - idNumber: Dropdown to select "string" or "number", then text or number input appears
@@ -410,20 +410,20 @@ class UserRegistration {
   /* Override default form styles */
   --rtsf-form-padding: 2rem;
   --rtsf-field-margin-bottom: 1.5rem;
-  
+
   /* Custom label styles */
   --rtsf-label-font-size: 1rem;
   --rtsf-label-font-weight: 600;
   --rtsf-label-color: #1f2937;
-  
+
   /* Custom input styles */
   --rtsf-input-padding: 0.75rem 1rem;
   --rtsf-input-border: 2px solid #e5e7eb;
   --rtsf-input-border-radius: 0.5rem;
-  
+
   /* Focus state */
   --rtsf-input-focus-border: 2px solid #3b82f6;
-  
+
   /* Error state */
   --rtsf-input-error-border: 2px solid #ef4444;
   --rtsf-error-text-color: #ef4444;
@@ -472,7 +472,7 @@ export function ControlledForm() {
         onChange={(values) => setFormData(values)}
         onSubmit={(values) => console.log('Final values:', values)}
       />
-      
+
       <div>
         <h3>Live Preview</h3>
         <p>Name: {formData.name}</p>

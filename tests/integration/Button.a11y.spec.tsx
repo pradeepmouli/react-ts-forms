@@ -1,5 +1,5 @@
-import React from 'react';
 import { render } from '@testing-library/react';
+import React from 'react';
 import { describe, it } from 'vitest';
 import { Button } from '../../src/components/Button';
 import { testA11y } from '../../vitest.setup';
