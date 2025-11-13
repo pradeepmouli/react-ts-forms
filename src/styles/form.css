@@ -244,6 +244,57 @@
   margin-top: var(--rtsf-space-3);
 }
 
+/* Recursive fields */
+.rtsf-recursive-field {
+  border: 1px solid var(--rtsf-color-border);
+  border-radius: var(--rtsf-radius-md);
+  padding: var(--rtsf-space-3);
+  margin-bottom: var(--rtsf-space-3);
+}
+
+.rtsf-recursive-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--rtsf-space-2);
+  width: 100%;
+  padding: var(--rtsf-space-2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: var(--rtsf-font-size-base);
+  font-family: inherit;
+}
+
+.rtsf-recursive-toggle:hover {
+  background-color: var(--rtsf-color-border);
+  border-radius: var(--rtsf-radius-sm);
+}
+
+.rtsf-recursive-icon {
+  display: inline-block;
+  width: 12px;
+  font-size: var(--rtsf-font-size-sm);
+  transition: transform 0.2s ease;
+}
+
+.rtsf-recursive-label {
+  font-weight: 600;
+  flex: 1;
+}
+
+.rtsf-recursive-type-hint {
+  font-size: var(--rtsf-font-size-sm);
+  color: var(--rtsf-color-help);
+  font-style: italic;
+}
+
+.rtsf-recursive-content {
+  margin-top: var(--rtsf-space-3);
+  padding-left: var(--rtsf-space-4);
+  border-left: 2px solid var(--rtsf-color-border);
+}
+
 /* Help text */
 .rtsf-help-text {
   margin-top: var(--rtsf-space-1);

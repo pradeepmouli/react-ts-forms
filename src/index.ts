@@ -34,6 +34,10 @@ export { UnionField } from './components/fields/UnionField';
 export type { UnionFieldProps } from './components/fields/UnionField';
 export { TextAreaField } from './components/fields/TextAreaField';
 
+// T124: Phase 6 field components (Advanced Features)
+export { RecursiveField } from './components/fields/RecursiveField';
+export type { RecursiveFieldProps } from './components/fields/RecursiveField';
+
 // T102: Phase 5 decorators (User Story 3)
 export { Label } from './decorators/Label';
 export { Placeholder } from './decorators/Placeholder';

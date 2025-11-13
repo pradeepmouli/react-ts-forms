@@ -1,7 +1,8 @@
 /**
- * FormGenerator - Main form component (T035-T039, T098-T099)
+ * FormGenerator - Main form component (T035-T039, T098-T099, T116-T118)
  * Orchestrates form rendering, state management, and validation
  * Phase 5: Enhanced with custom component support and controlType routing
+ * Phase 6: Added recursive type support with expand/collapse
  */
 
 import * as React from 'react';
@@ -18,6 +19,7 @@ import { RadioField } from './fields/RadioField';
 import { ArrayField } from './fields/ArrayField';
 import { UnionField } from './fields/UnionField';
 import { TextAreaField } from './fields/TextAreaField';
+import { RecursiveField } from './fields/RecursiveField';
 
 export interface FormGeneratorProps<T = Record<string, unknown>> {
 	schema: FormSchema;
@@ -139,11 +141,28 @@ function useFormState<T = Record<string, unknown>>(
 		});
 	}, [initialValues]);
 
-	return { state, updateField, markTouched, validateAll, resetForm };
+	// T117: Toggle recursive field expansion
+	const toggleRecursive = React.useCallback((path: string) => {
+		setState(prev => {
+			const newExpanded = new Set(prev.expandedRecursiveFields);
+			if (newExpanded.has(path)) {
+				newExpanded.delete(path);
+			} else {
+				newExpanded.add(path);
+			}
+			return {
+				...prev,
+				expandedRecursiveFields: newExpanded,
+			};
+		});
+	}, []);
+
+	return { state, updateField, markTouched, validateAll, resetForm, toggleRecursive };
 }
 
 /**
  * T035: FormGenerator component
+ * T118: Enhanced with recursive field support
  * Main form orchestration component
  */
 export function FormGenerator<T = Record<string, unknown>>({
@@ -154,7 +173,7 @@ export function FormGenerator<T = Record<string, unknown>>({
 	className,
 	style,
 }: FormGeneratorProps<T>) {
-	const { state, updateField, markTouched, validateAll } = useFormState<T>(schema, initialValues);
+	const { state, updateField, markTouched, validateAll, toggleRecursive } = useFormState<T>(schema, initialValues);
 
 	// Notify parent of changes
 	React.useEffect(() => {
@@ -201,6 +220,7 @@ export function FormGenerator<T = Record<string, unknown>>({
 					formState={state}
 					onFieldChange={updateField}
 					onFieldBlur={markTouched}
+					onToggleRecursive={toggleRecursive}
 					parentPath=""
 				/>
 			))}
@@ -214,6 +234,7 @@ export function FormGenerator<T = Record<string, unknown>>({
 
 /**
  * T035: Field renderer - maps FieldDefinition to appropriate component
+ * T118: Enhanced with recursive field support
  */
 interface FieldRendererProps<T = Record<string, unknown>> {
 	definition: FieldDefinition;
@@ -221,6 +242,7 @@ interface FieldRendererProps<T = Record<string, unknown>> {
 	formState: FormState<T>;
 	onFieldChange: (path: string, value: unknown) => void;
 	onFieldBlur: (path: string) => void;
+	onToggleRecursive: (path: string) => void;
 	parentPath: string;
 }
 
@@ -230,6 +252,7 @@ function FieldRenderer<T = Record<string, unknown>>({
 	formState,
 	onFieldChange,
 	onFieldBlur,
+	onToggleRecursive,
 	parentPath,
 }: FieldRendererProps<T>) {
 	const fieldPath = parentPath ? `${parentPath}.${definition.name}` : definition.name;
@@ -310,6 +333,7 @@ function FieldRenderer<T = Record<string, unknown>>({
 									onFieldChange(fieldPath, newArray);
 								}}
 								onFieldBlur={onFieldBlur}
+								onToggleRecursive={onToggleRecursive}
 								parentPath={`${fieldPath}[${index}]`}
 							/>
 						);
@@ -328,6 +352,7 @@ function FieldRenderer<T = Record<string, unknown>>({
 							formState={formState}
 							onFieldChange={(path, val) => variantOnChange(val)}
 							onFieldBlur={onFieldBlur}
+							onToggleRecursive={onToggleRecursive}
 							parentPath={fieldPath}
 						/>
 					)}
@@ -345,10 +370,37 @@ function FieldRenderer<T = Record<string, unknown>>({
 							formState={formState}
 							onFieldChange={onFieldChange}
 							onFieldBlur={onFieldBlur}
+							onToggleRecursive={onToggleRecursive}
 							parentPath={fieldPath}
 						/>
 					))}
 				</ObjectField>
+			);
+
+		// T118: Handle recursive types (Phase 6)
+		case 'recursive':
+			const isExpanded = formState.expandedRecursiveFields.has(fieldPath);
+			return (
+				<RecursiveField
+					{...commonProps}
+					value={value as Record<string, unknown>}
+					isExpanded={isExpanded}
+					onToggle={() => onToggleRecursive(fieldPath)}
+					depth={parentPath.split('.').filter(Boolean).length}
+				>
+					{isExpanded && definition.nestedFields?.map(nested => (
+						<FieldRenderer
+							key={nested.name}
+							definition={nested}
+							value={getValueByPath(value as Record<string, unknown> || {}, nested.name)}
+							formState={formState}
+							onFieldChange={onFieldChange}
+							onFieldBlur={onFieldBlur}
+							onToggleRecursive={onToggleRecursive}
+							parentPath={fieldPath}
+						/>
+					))}
+				</RecursiveField>
 			);
 
 		default:
