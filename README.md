@@ -221,14 +221,96 @@ const resolved = TypeParser.resolveGenerics(listType, {
 // Results in: array of string
 ```
 
+## Vite Plugin (Phase 7) ✓
+
+The Vite plugin provides build-time integration for optimized performance and better developer experience.
+
+### Installation
+
+```bash
+npm install @mouli.dev/react-ts-forms
+```
+
+### Configuration
+
+Add the plugin to your `vite.config.ts`:
+
+```ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { typeFormPlugin } from '@mouli.dev/react-ts-forms/vite';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    typeFormPlugin({
+      debug: true,  // Enable debug logging
+      cache: true,  // Enable schema caching (default: true)
+      include: ['**/*.tsx', '**/*.ts'],
+      exclude: ['**/*.test.ts', '**/*.test.tsx', '**/node_modules/**'],
+    }),
+  ],
+});
+```
+
+### Plugin Options
+
+```ts
+interface TypeFormPluginOptions {
+  /**
+   * File patterns to include for type analysis
+   * @default ['**/*.tsx', '**/*.ts']
+   */
+  include?: string | string[];
+
+  /**
+   * File patterns to exclude from type analysis
+   * @default ['**\/node_modules/**', '**\/*.test.ts', '**\/*.test.tsx']
+   */
+  exclude?: string | string[];
+
+  /**
+   * Enable debug logging with performance metrics
+   * @default false
+   */
+  debug?: boolean;
+
+  /**
+   * Cache parsed schemas (recommended for performance)
+   * @default true
+   */
+  cache?: boolean;
+}
+```
+
+### Features
+
+- **Automatic Type Detection**: Monitors TypeScript files during build
+- **Performance Optimization**: Caches schemas and only regenerates on file changes
+- **Debug Metrics**: Shows transform times and cache hit rates
+- **Smart Filtering**: Automatically excludes test files and node_modules
+
+### Example Output (Debug Mode)
+
+```
+[react-ts-forms] Processing: src/components/UserForm.tsx
+[react-ts-forms] Processed in 12.34ms
+
+[react-ts-forms] Performance Metrics:
+  Total transforms: 15
+  Cache hits: 12
+  Cache misses: 3
+  Cache hit rate: 80.0%
+```
+
 ## Roadmap (high level)
 
 - Phase 2: Foundational (types, registry) ✓
 - Phase 3: MVP (parser, schema builder, text/number/checkbox/object fields, basic validation) ✓
 - Phase 4: Complex types (arrays, enums, unions, dates) ✓
 - Phase 5: Customization & styling (decorators, custom components, CSS tokens) ✓
-- Phase 6: Advanced (recursive types, readonly fields, generic resolution) ✓
-- Phase 7: Vite plugin (build-time automation)
+- Phase 6: Advanced (recursive types, readonly fields, generic resolution, template literals, field masks) ✓
+- Phase 7: Vite plugin (build-time automation) ✓
 - Phase 8: Polish (a11y sweep, performance, docs, packaging)
 
 For detailed tasks, see `specs/001-type-driven-form/tasks.md`.
