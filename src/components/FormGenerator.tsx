@@ -1,6 +1,7 @@
 /**
- * FormGenerator - Main form component (T035-T039)
+ * FormGenerator - Main form component (T035-T039, T098-T099)
  * Orchestrates form rendering, state management, and validation
+ * Phase 5: Enhanced with custom component support and controlType routing
  */
 
 import * as React from 'react';
@@ -16,6 +17,7 @@ import { SelectField } from './fields/SelectField';
 import { RadioField } from './fields/RadioField';
 import { ArrayField } from './fields/ArrayField';
 import { UnionField } from './fields/UnionField';
+import { TextAreaField } from './fields/TextAreaField';
 
 export interface FormGeneratorProps<T = Record<string, unknown>> {
 	schema: FormSchema;
@@ -253,8 +255,13 @@ function FieldRenderer<T = Record<string, unknown>>({
 	}
 
 	// Map to built-in field components based on type
+	// T098: Check controlType override first for custom control routing
 	switch (definition.type) {
 		case 'string':
+			// T098: Support textarea control type override
+			if (definition.controlType === 'textarea') {
+				return <TextAreaField {...commonProps} value={value as string} />;
+			}
 			return <TextField {...commonProps} value={value as string} />;
 
 		case 'number':
@@ -267,7 +274,14 @@ function FieldRenderer<T = Record<string, unknown>>({
 			return <DateField {...commonProps} value={value as Date | string} />;
 
 		case 'enum':
-			// Use radio for small enums (≤4 options), select for larger
+			// T098: Check for control type override
+			if (definition.controlType === 'radio') {
+				return <RadioField {...commonProps} />;
+			}
+			if (definition.controlType === 'select') {
+				return <SelectField {...commonProps} />;
+			}
+			// Default: Use radio for small enums (≤4 options), select for larger
 			if (definition.enumValues && definition.enumValues.length <= 4) {
 				return <RadioField {...commonProps} />;
 			}

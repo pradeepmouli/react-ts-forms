@@ -41,7 +41,8 @@
 
 /* Inputs */
 .rtsf-input,
-.rtsf-select {
+.rtsf-select,
+.rtsf-textarea {
   display: block;
   width: 100%;
   padding: var(--rtsf-space-2);
@@ -53,20 +54,28 @@
   font-family: inherit;
 }
 
+.rtsf-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
 .rtsf-input:focus,
-.rtsf-select:focus {
+.rtsf-select:focus,
+.rtsf-textarea:focus {
   outline: none;
   border-color: var(--rtsf-color-focus);
   box-shadow: var(--rtsf-shadow-focus);
 }
 
 .rtsf-input[aria-invalid="true"],
-.rtsf-select[aria-invalid="true"] {
+.rtsf-select[aria-invalid="true"],
+.rtsf-textarea[aria-invalid="true"] {
   border-color: var(--rtsf-color-error);
 }
 
 .rtsf-input:disabled,
-.rtsf-select:disabled {
+.rtsf-select:disabled,
+.rtsf-textarea:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

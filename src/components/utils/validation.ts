@@ -137,16 +137,57 @@ function validateRule(
 		case 'custom':
 			if (rule.validator) {
 				const result = rule.validator(value, allValues);
-				// Handle async validators (simplified - would need Promise handling)
+				// T094: Handle sync custom validators
 				if (typeof result === 'boolean') {
 					return result ? null : rule.message;
 				}
+				// Async validators should be handled by runAsyncValidators
 			}
 			return null;
 
 		default:
 			return null;
 	}
+}
+
+/**
+ * T095: Run async validators for a field
+ * Returns a promise that resolves to error messages (empty if valid)
+ */
+export async function runAsyncValidators(
+	value: unknown,
+	definition: FieldDefinition,
+	allValues: Record<string, unknown>
+): Promise<string[]> {
+	const errors: string[] = [];
+
+	if (!definition.validators) {
+		return errors;
+	}
+
+	// Find async validators
+	const asyncValidators = definition.validators.filter(rule => rule.async || rule.type === 'custom');
+
+	for (const rule of asyncValidators) {
+		if (rule.type === 'custom' && rule.validator) {
+			try {
+				const result = rule.validator(value, allValues);
+				
+				// Check if it's a promise
+				if (result instanceof Promise) {
+					const isValid = await result;
+					if (!isValid) {
+						errors.push(rule.message);
+					}
+				}
+			} catch (error) {
+				// Validator threw an error, treat as validation failure
+				errors.push(rule.message);
+			}
+		}
+	}
+
+	return errors;
 }
 
 /**

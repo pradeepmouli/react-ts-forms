@@ -4,16 +4,19 @@
  * 
  * T029-T030: Phase 3 implementation (basic schema building)
  * T029a-T029b: External FormConfig integration
+ * T093: Phase 5 - Decorator integration
  */
 
 import type { FormSchema, FieldDefinition } from '../types/FormSchema';
 import type { FormConfig } from '../decorators/formConfig';
 import { getFormConfig } from '../decorators/registry';
+import { DecoratorProcessor } from './DecoratorProcessor';
 
 export class SchemaBuilder {
 	/**
 	 * T029: Build FormSchema from parsed field definitions
-	 * Applies default labels and merges configurations in precedence order
+	 * T093: Applies default labels and merges configurations in precedence order:
+	 * defaults → FormConfig → decorators
 	 */
 	static buildSchema<T = unknown>(
 		typeId: string,
@@ -33,11 +36,17 @@ export class SchemaBuilder {
 			? this.mergeFormConfig(fieldsWithLabels, config)
 			: fieldsWithLabels;
 
+		// T093: Apply decorator overrides (highest precedence)
+		const decoratorOverrides = DecoratorProcessor.extractMetadata(typeId);
+		const fieldsWithDecorators = fieldsWithConfig.map(field =>
+			DecoratorProcessor.applyFieldOverrides(field, decoratorOverrides)
+		);
+
 		return {
 			id: typeId,
 			title: options?.title || this.generateDefaultLabel(typeId),
 			description: options?.description,
-			fields: fieldsWithConfig,
+			fields: fieldsWithDecorators,
 		};
 	}
 
