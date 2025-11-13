@@ -14,7 +14,8 @@
 - Q: How should the form generator handle circular type references (e.g., a Node type with a `children: Node[]` field)? → A: Support unlimited depth with lazy expansion
 - Q: When a field can be multiple types, how does the user select which type they want to enter? → A: Dropdown or radio buttons to select type first, then appropriate input appears
 - Q: When should validation run and display errors to users? → A: Use react-jsonschema-form validation approach
-- Q: How will type-level configuration be implemented? → A: Type-level configuration (control selection, custom controls, labels, validation) will use TypeScript decorators at property-level or type/interface level
+- Q: How will type-level configuration be implemented? → A: Type-level configuration (control selection, custom controls, labels, validation) will use TypeScript decorators at property-level or class level (NOT on interfaces or type aliases).
+- Q: How are metadata overrides applied for interfaces or type aliases that cannot use decorators? → A: Use external strongly-typed config constants (e.g. `const profileFormConfig: FormConfig<UserProfile> = { fields: { firstName: { label: 'First Name' } } }`) that mirror the surface of the type.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -95,14 +96,15 @@ A developer wants forms that match their application's design system. They need 
 - **FR-010**: Component MUST display validation errors inline near the relevant form fields.
 - **FR-011**: Component MUST validate fields using the same timing strategy as react-jsonschema-form (live validation as user interacts, with errors shown after first interaction with each field).
 - **FR-012**: Component MUST support Date types with appropriate date/time input controls.
-- **FR-013**: Component MUST allow customization of field labels, placeholders, and help text via TypeScript decorators.
-- **FR-014**: Component MUST support custom validation rules beyond type constraints via TypeScript decorators.
+- **FR-013**: Component MUST allow customization of field labels, placeholders, and help text via TypeScript decorators (class property decorators only).
+- **FR-014**: Component MUST support custom validation rules beyond type constraints via TypeScript decorators (class property decorators only).
 - **FR-015**: Component MUST be accessible with proper ARIA labels, keyboard navigation, and screen reader support.
-- **FR-016**: Component MUST allow custom styling through CSS classes or style properties specified via TypeScript decorators.
-- **FR-017**: Component MUST support control type selection (dropdown vs radio buttons, etc.) via TypeScript decorators at property or type level.
+- **FR-016**: Component MUST allow custom styling through CSS classes or style properties specified via TypeScript decorators (class property decorators only).
+- **FR-017**: Component MUST support control type selection (dropdown vs radio buttons, etc.) via TypeScript decorators at class property level.
 - **FR-018**: Component MUST support recursive and circular type references with lazy expansion controls to prevent infinite UI rendering.
-- **FR-017**: Component MUST handle readonly type properties by rendering them as disabled inputs or read-only displays.
-- **FR-018**: Component MUST handle union types by presenting a type selector (dropdown or radio buttons) before showing the appropriate input control for the selected type.
+- **FR-019**: Component MUST handle readonly type properties by rendering them as disabled inputs or read-only displays.
+- **FR-020**: Component MUST handle union types by presenting a type selector (dropdown or radio buttons) before showing the appropriate input control for the selected type.
+- **FR-021**: Component MUST allow metadata overrides for interfaces and type aliases (non-class types) via external strongly-typed config objects (`FormConfig<T>` pattern) mapping field names to override definitions.
 
 ### Key Entities
 
@@ -110,7 +112,7 @@ A developer wants forms that match their application's design system. They need 
 - **Field Definition**: Describes a single form field with its type, label, validation constraints, default value, and UI control type.
 - **Form State**: Current values of all form fields, validation status, error messages, and submission state.
 - **Validation Rule**: Constraint on field values (required, min/max length, pattern matching, custom validators).
-- **Field Override**: Custom configuration for specific fields (label, placeholder, custom component, validators) specified via TypeScript decorators at property or type/interface level.
+- **Field Override**: Custom configuration for specific fields (label, placeholder, custom component, validators) specified via class property decorators OR external config objects for interfaces/type aliases.
 
 ## Success Criteria *(mandatory)*
 
@@ -132,4 +134,4 @@ A developer wants forms that match their application's design system. They need 
 - Default styling is minimal and semantic, expecting developers to apply their own design system.
 - Form submission handling (HTTP requests, state management) is the developer's responsibility; this component focuses on UI generation and data collection.
 - Type definitions are analyzed at build-time via TypeScript compiler API or bundler integration.
-- Decorators are used for all type-level configuration including control type selection, custom components, labels, placeholders, validation rules, and styling.
+- Decorators are used for all class-based configuration including control type selection, custom components, labels, placeholders, validation rules, and styling. For interfaces and type aliases, external `FormConfig<T>` objects supply equivalent metadata.

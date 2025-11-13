@@ -1,0 +1,43 @@
+:root {
+  /* Color tokens */
+  --rtsf-color-text: #222;
+  --rtsf-color-bg: #fff;
+  --rtsf-color-border: #d0d7de;
+  --rtsf-color-focus: #0969da;
+  --rtsf-color-error: #d1242f;
+  --rtsf-color-help: #57606a;
+
+  /* Spacing tokens */
+  --rtsf-space-1: 4px;
+  --rtsf-space-2: 8px;
+  --rtsf-space-3: 12px;
+  --rtsf-space-4: 16px;
+  --rtsf-space-6: 24px;
+
+  /* Typography tokens */
+  --rtsf-font-family-base: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  --rtsf-font-size-sm: 12px;
+  --rtsf-font-size-base: 14px;
+  --rtsf-font-size-md: 16px;
+  --rtsf-font-size-lg: 20px;
+
+  /* Border radius */
+  --rtsf-radius-sm: 3px;
+  --rtsf-radius-md: 6px;
+  --rtsf-radius-lg: 8px;
+
+  /* Shadow */
+  --rtsf-shadow-focus: 0 0 0 2px rgba(9,105,218,0.3);
+}
+
+/* Optional dark theme hook */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rtsf-color-text: #e6edf3;
+    --rtsf-color-bg: #0d1117;
+    --rtsf-color-border: #30363d;
+    --rtsf-color-focus: #58a6ff;
+    --rtsf-color-error: #ff6e6e;
+    --rtsf-color-help: #8b949e;
+  }
+}

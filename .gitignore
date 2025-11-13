@@ -1,0 +1,29 @@
+# Node/TypeScript
+node_modules/
+dist/
+build/
+coverage/
+*.log
+*.log.*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Storybook
+storybook-static/
+
+# Tests
+.junit/
+.nyc_output/
+
+# Misc
+*.tmp
+*.swp

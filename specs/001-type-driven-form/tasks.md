@@ -24,31 +24,30 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per plan.md: src/generator/, src/components/, src/decorators/, src/types/, tests/unit/, tests/integration/, tests/a11y/
-- [ ] T002 Initialize package.json with peerDependencies (react ^18.0.0, react-dom ^18.0.0, typescript ^5.6.0)
-- [ ] T003 [P] Configure tsconfig.json with experimentalDecorators: true, target: ES2022, jsx: react-jsx
-- [ ] T004 [P] Setup Vitest config in vitest.config.ts with jsdom environment and React Testing Library
-- [ ] T005 [P] Create vitest.setup.ts with axe-core matchers for a11y testing
-- [ ] T006 [P] Setup Storybook v8 with react-vite framework in .storybook/
-- [ ] T007 [P] Configure build tooling in vite.config.ts for library mode with ESM output
-- [ ] T008 [P] Setup size-limit in package.json with 15KB gzipped budget
-- [ ] T009 Create src/index.ts as main entry point (will be populated in later phases)
+ - [X] T001 Create project structure per plan.md: src/generator/, src/components/, src/decorators/, src/types/, tests/unit/, tests/integration/, tests/a11y/
+ - [X] T002 Initialize package.json with peerDependencies (react ^18.0.0, react-dom ^18.0.0, typescript ^5.6.0)
+ - [X] T003 [P] Configure tsconfig.json with experimentalDecorators: true, target: ES2022, jsx: react-jsx
+ - [X] T004 [P] Setup Vitest config in vitest.config.ts with jsdom environment and React Testing Library
+ - [X] T005 [P] Create vitest.setup.ts with axe-core matchers for a11y testing
+ - [X] T006 [P] Setup Storybook v8 with react-vite framework in .storybook/
+ - [X] T007 [P] Configure build tooling in vite.config.ts for library mode with ESM output
+ - [X] T008 [P] Setup size-limit in package.json with 15KB gzipped budget
+ - [X] T009 Create src/index.ts as main entry point (will be populated in later phases)
 
----
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
-
-- [ ] T010 Create TypeScript type definitions in src/types/FormSchema.ts (FormSchema, FieldDefinition, FieldType, ControlType interfaces from data-model.md)
-- [ ] T011 [P] Create TypeScript type definitions in src/types/FormState.ts (FormState interface with values, errors, touched, validating, submitted, etc.)
-- [ ] T012 [P] Create TypeScript type definitions in src/types/ValidationRule.ts (ValidationRule, ValidationType, ValidationTiming interfaces)
-- [ ] T013 [P] Create TypeScript type definitions in src/types/FieldProps.ts (FieldProps interface for custom components)
-- [ ] T014 Create base ARIA utilities in src/components/utils/accessibility.ts (generateId, getAriaProps, getErrorId functions)
-- [ ] T015 [P] Create CSS variables file in src/styles/tokens.css with --rtsf-* prefixed design tokens per contracts/api-contracts.md
-- [ ] T016 [P] Setup decorator metadata registry in src/decorators/registry.ts (global Map for storing decorator metadata at build-time)
+ - [X] T010 Create TypeScript type definitions in src/types/FormSchema.ts (FormSchema, FieldDefinition, FieldType, ControlType interfaces from data-model.md)
+ - [X] T011 [P] Create TypeScript type definitions in src/types/FormState.ts (FormState interface with values, errors, touched, validating, submitted, etc.)
+ - [X] T012 [P] Create TypeScript type definitions in src/types/ValidationRule.ts (ValidationRule, ValidationType, ValidationTiming interfaces)
+ - [X] T013 [P] Create TypeScript type definitions in src/types/FieldProps.ts (FieldProps interface for custom components)
+ - [X] T014 Create base ARIA utilities in src/components/utils/accessibility.ts (generateId, getAriaProps, getErrorId functions)
+ - [X] T015 [P] Create CSS variables file in src/styles/tokens.css with --rtsf-* prefixed design tokens per contracts/api-contracts.md
+ - [X] T016 [P] Setup decorator metadata registry in src/decorators/registry.ts (global Map for storing decorator metadata at build-time)
+ - [X] T016a Create external config support type in src/decorators/formConfig.ts (define FormConfig<T> & defineFormConfig helper) [FR-021]
+ - [X] T016b Add FormConfig registry integration in src/decorators/registry.ts (registerFormConfig(), getFormConfig()) [FR-021]
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -83,6 +82,8 @@
 - [ ] T028 [US1] Implement TypeParser.resolvePrimitiveType() in src/generator/TypeParser.ts (map TS types to FieldType: string, number, boolean)
 - [ ] T029 [US1] Implement SchemaBuilder.buildSchema() in src/generator/SchemaBuilder.ts (create FormSchema from parsed type with default labels from field names)
 - [ ] T030 [US1] Implement SchemaBuilder.generateDefaultLabel() in src/generator/SchemaBuilder.ts (convert camelCase to "Title Case" for labels)
+ - [ ] T029a [US1] Integrate FormConfig merge into SchemaBuilder.buildSchema() (precedence: defaults → FormConfig → decorators) [FR-021]
+ - [ ] T029b [US1] Add integration test for external config overrides in tests/integration/form-config-overrides.test.tsx (non-class type configuration) [FR-021]
 
 **Runtime Field Components**
 
@@ -231,11 +232,13 @@
 
 - [ ] T102 [US3] Export all decorators from src/index.ts (@Label, @Placeholder, @HelpText, @Validate, @CustomControl, @ControlType, @UnionControl)
 - [ ] T103 [US3] Export FieldProps interface from src/index.ts (for custom component authors)
+ - [ ] T102a [US3] Export FormConfig type & defineFormConfig helper from src/index.ts (enable external configuration for interfaces/types) [FR-021]
 - [ ] T104 [US3] Create Storybook story for custom labels in src/components/FormGenerator.stories.tsx (decorator examples)
 - [ ] T105 [US3] Create Storybook story for custom validation in src/components/FormGenerator.stories.tsx (custom validators, error messages)
 - [ ] T106 [US3] Create Storybook story for custom components in src/components/FormGenerator.stories.tsx (RichTextEditor example from quickstart.md)
 - [ ] T107 [US3] Create Storybook story for custom styling in src/components/FormGenerator.stories.tsx (CSS variables demo, className demo)
 - [ ] T108 [US3] Update README.md with decorator API reference and customization examples
+ - [ ] T108a [US3] Update README.md with external FormConfig<T> usage section + precedence matrix [FR-021]
 
 **Checkpoint**: All three user stories are now independently functional. Forms support full customization via decorators.
 
@@ -320,6 +323,7 @@
 **Documentation & Examples**
 
 - [ ] T139 [P] Create comprehensive README.md in repository root (installation, features, quick start, API reference, contributing)
+ - [ ] T139a Include FormConfig external configuration example & link to FR-021 in README.md
 - [ ] T140 [P] Create CONTRIBUTING.md with development setup, testing guidelines, PR process
 - [ ] T141 [P] Validate all quickstart.md examples in tests/integration/quickstart-validation.test.tsx (ensure examples work as documented)
 - [ ] T142 [P] Create API documentation site scaffold in docs/ (optional: use Storybook docs addon)
@@ -351,6 +355,7 @@
 **Type Safety Verification**
 
 - [ ] T158 [P] Verify type inference works correctly in all examples (test TypeScript compiler output)
+ - [ ] T158a Add type inference test for defineFormConfig<T>() in tests/unit/type-safety.test.ts (ensures property key narrowing) [FR-021]
 - [ ] T159 [P] Add strict type checks to CI pipeline (tsc --noEmit)
 - [ ] T160 Create type-safety test cases in tests/unit/type-safety.test.ts (compile-time type checking)
 
