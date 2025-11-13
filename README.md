@@ -146,9 +146,9 @@ const schema = SchemaBuilder.buildSchema('User', [
 
 Readonly fields render as disabled inputs with visual indicators.
 
-### Template Literal Types
+### Template Literal Types & Field Masks
 
-Use TypeScript template literal types for pattern-based validation and field masks:
+Use TypeScript template literal types for pattern-based validation and **automatic field masking**:
 
 ```ts
 // User ID pattern: user-{number}
@@ -157,6 +157,7 @@ const userIdField = TypeParser.parseType('userId', {
   templatePattern: 'user-${number}',
   required: true,
 });
+// Auto-formats input: "123" → "user-123"
 
 // SKU pattern: SKU-{text}-{number}
 const skuField = TypeParser.parseType('sku', {
@@ -164,6 +165,7 @@ const skuField = TypeParser.parseType('sku', {
   templatePattern: 'SKU-${string}-${number}',
   required: true,
 });
+// Auto-formats: "LAPTOP4567" → "SKU-LAPTOP-4567"
 
 // Semantic version: major.minor.patch
 const versionField = TypeParser.parseType('version', {
@@ -171,18 +173,37 @@ const versionField = TypeParser.parseType('version', {
   templatePattern: '${number}.${number}.${number}',
   required: true,
 });
+// Auto-formats: "210" → "2.1.0"
 ```
 
 **Supported placeholders:**
-- `${string}` - Any string (.*  in regex)
+- `${string}` - Any string (.* in regex)
 - `${number}` - Numeric digits (\d+ in regex)
 - `${bigint}` - Numeric digits (\d+ in regex)
 - `${boolean}` - Literal "true" or "false"
 
-Template patterns automatically generate:
-- Pattern validation (regex)
-- Helpful error messages
-- Field masks (future enhancement)
+**Template patterns automatically generate:**
+- ✅ Pattern validation (regex)
+- ✅ Helpful error messages
+- ✅ **Field masks** - Auto-format input as users type
+- ✅ Auto-generated placeholders
+
+**Field Mask Features:**
+- Formats input in real-time as users type
+- Extracts raw value for validation and submission
+- Maintains cursor position during formatting
+- Automatically adds literal separators (-, ., etc.)
+- Visual feedback for expected format
+
+**Manual Field Mask Usage:**
+```ts
+import { generateFieldMask } from 'react-ts-forms';
+
+const mask = generateFieldMask('user-${number}');
+// mask.format('123') → 'user-123'
+// mask.parse('user-123') → '123'
+// mask.placeholder → 'user-123'
+```
 
 ### Generic Type Resolution
 

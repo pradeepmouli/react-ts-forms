@@ -526,8 +526,8 @@ export const WithReadonlyFields: Story = {
 };
 
 /**
- * Phase 6: Template literal types example
- * Demonstrates template literal type patterns for validation and field masks
+ * Phase 6: Template literal types with field masks
+ * Demonstrates auto-formatting as users type (try typing just numbers/letters)
  */
 export const WithTemplateLiteralTypes: Story = {
 	args: {
@@ -538,17 +538,15 @@ export const WithTemplateLiteralTypes: Story = {
 				templatePattern: 'user-${number}',
 				required: true,
 			});
-			userIdField.placeholder = 'e.g., user-123';
-			userIdField.helpText = 'Must match pattern: user-{number}';
+			userIdField.helpText = 'Auto-formats as you type! Try typing just "123"';
 
-			// SKU must match pattern: SKU-{uppercase}-{number}
+			// SKU must match pattern: SKU-{text}-{number}
 			const skuField = TypeParser.parseType('productSku', {
 				kind: 'template-literal',
 				templatePattern: 'SKU-${string}-${number}',
 				required: true,
 			});
-			skuField.placeholder = 'e.g., SKU-LAPTOP-4567';
-			skuField.helpText = 'Must match pattern: SKU-{text}-{number}';
+			skuField.helpText = 'Auto-formats! Try typing "LAPTOP4567"';
 
 			// Version must match semantic versioning
 			const versionField = TypeParser.parseType('version', {
@@ -556,29 +554,28 @@ export const WithTemplateLiteralTypes: Story = {
 				templatePattern: '${number}.${number}.${number}',
 				required: true,
 			});
-			versionField.placeholder = 'e.g., 1.2.3';
-			versionField.helpText = 'Semantic version: major.minor.patch';
+			versionField.helpText = 'Auto-formats! Try typing "210" → "2.1.0"';
 
-			// Status flag
-			const statusField = TypeParser.parseType('active', {
+			// Phone number pattern
+			const phoneField = TypeParser.parseType('phone', {
 				kind: 'template-literal',
-				templatePattern: '${boolean}',
+				templatePattern: '(${number}) ${number}-${number}',
 				required: false,
 			});
-			statusField.helpText = 'Must be "true" or "false"';
+			phoneField.helpText = 'Auto-formats! Try typing "5551234567"';
 
-			const fields = [userIdField, skuField, versionField, statusField];
+			const fields = [userIdField, skuField, versionField, phoneField];
 
 			return SchemaBuilder.buildSchema('TemplatePatterns', fields, {
-				title: 'Template Literal Type Patterns',
-				description: 'Fields with template literal type validation (try invalid patterns to see validation)',
+				title: 'Template Literal Types with Field Masks',
+				description: 'Fields auto-format as you type! Notice the literal parts are added automatically.',
 			});
 		})(),
 		initialValues: {
-			userId: 'user-42',
-			productSku: 'SKU-MOUSE-789',
+			userId: '42',
+			productSku: 'MOUSE789',
 			version: '2.1.0',
-			active: 'true',
+			phone: '',
 		},
 		onSubmit: (values) => {
 			console.log('Form submitted:', values);
