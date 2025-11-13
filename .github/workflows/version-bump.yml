@@ -1,0 +1,58 @@
+name: Version Bump
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  bump:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.base.ref, 'main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine bump type
+        id: bump
+        run: |
+          LABELS='${{ toJson(github.event.pull_request.labels) }}'
+          echo "Labels: $LABELS"
+          if echo "$LABELS" | grep -q 'release:major'; then
+            echo "type=major" >> $GITHUB_OUTPUT
+          elif echo "$LABELS" | grep -q 'release:minor'; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          elif echo "$LABELS" | grep -q 'release:patch'; then
+            echo "type=patch" >> $GITHUB_OUTPUT
+          else
+            echo "type=none" >> $GITHUB_OUTPUT
+          fi
+      - name: Exit if none
+        if: steps.bump.outputs.type == 'none'
+        run: echo "No version bump labels found; exiting." && exit 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - name: Install deps
+        run: pnpm install --frozen-lockfile=false
+      - name: Bump version
+        id: pkg
+        run: |
+          TYPE="${{ steps.bump.outputs.type }}"
+          node -e "const fs=require('fs');const p=require('./package.json');const [maj,min,patch]=p.version.split('.').map(Number);if(TYPE==='major')p.version=maj+1+'.0.0';else if(TYPE==='minor')p.version=maj+'.'+(min+1)+'.0';else if(TYPE==='patch')p.version=maj+'.'+min+'.'+(patch+1);fs.writeFileSync('package.json',JSON.stringify(p,null,2));console.log(p.version);" > new_version.txt
+          echo "version=$(cat new_version.txt)" >> $GITHUB_OUTPUT
+      - name: Commit and tag
+        run: |
+          VERSION="${{ steps.pkg.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to v$VERSION"
+          git tag "v$VERSION"
+          git push origin HEAD:main --tags
