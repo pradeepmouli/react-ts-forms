@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom';
 import { expect } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 // a11y helper (lazy import axe for performance)
 export async function testA11y(container: HTMLElement) {
