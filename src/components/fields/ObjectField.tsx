@@ -6,7 +6,11 @@
 import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
 
-export const ObjectField: React.FC<FieldProps<Record<string, unknown>>> = ({
+export interface ObjectFieldProps extends FieldProps<Record<string, unknown>> {
+	children?: React.ReactNode;
+}
+
+export const ObjectField: React.FC<ObjectFieldProps> = ({
 	definition,
 	children,
 }) => {

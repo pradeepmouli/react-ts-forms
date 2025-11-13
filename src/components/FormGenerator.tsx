@@ -11,6 +11,11 @@ import { TextField } from './fields/TextField';
 import { NumberField } from './fields/NumberField';
 import { CheckboxField } from './fields/CheckboxField';
 import { ObjectField } from './fields/ObjectField';
+import { DateField } from './fields/DateField';
+import { SelectField } from './fields/SelectField';
+import { RadioField } from './fields/RadioField';
+import { ArrayField } from './fields/ArrayField';
+import { UnionField } from './fields/UnionField';
 
 export interface FormGeneratorProps<T = Record<string, unknown>> {
 	schema: FormSchema;
@@ -208,23 +213,23 @@ export function FormGenerator<T = Record<string, unknown>>({
 /**
  * T035: Field renderer - maps FieldDefinition to appropriate component
  */
-interface FieldRendererProps {
+interface FieldRendererProps<T = Record<string, unknown>> {
 	definition: FieldDefinition;
 	value: unknown;
-	formState: FormState;
+	formState: FormState<T>;
 	onFieldChange: (path: string, value: unknown) => void;
 	onFieldBlur: (path: string) => void;
 	parentPath: string;
 }
 
-function FieldRenderer({
+function FieldRenderer<T = Record<string, unknown>>({
 	definition,
 	value,
 	formState,
 	onFieldChange,
 	onFieldBlur,
 	parentPath,
-}: FieldRendererProps) {
+}: FieldRendererProps<T>) {
 	const fieldPath = parentPath ? `${parentPath}.${definition.name}` : definition.name;
 	const touched = formState.touched.has(fieldPath);
 	const errors = formState.errors[fieldPath] || [];
@@ -238,7 +243,7 @@ function FieldRenderer({
 		touched,
 		errors,
 		validating,
-		formState,
+		formState: formState as FormState,
 	};
 
 	// Use custom component if provided
@@ -250,17 +255,74 @@ function FieldRenderer({
 	// Map to built-in field components based on type
 	switch (definition.type) {
 		case 'string':
-			return <TextField {...commonProps} />;
+			return <TextField {...commonProps} value={value as string} />;
 
 		case 'number':
-			return <NumberField {...commonProps} />;
+			return <NumberField {...commonProps} value={value as number} />;
 
 		case 'boolean':
-			return <CheckboxField {...commonProps} />;
+			return <CheckboxField {...commonProps} value={value as boolean} />;
+
+		case 'date':
+			return <DateField {...commonProps} value={value as Date | string} />;
+
+		case 'enum':
+			// Use radio for small enums (≤4 options), select for larger
+			if (definition.enumValues && definition.enumValues.length <= 4) {
+				return <RadioField {...commonProps} />;
+			}
+			return <SelectField {...commonProps} />;
+
+		case 'array':
+			return (
+				<ArrayField
+					{...commonProps}
+					value={value as unknown[] || []}
+					renderItem={(item, index, onItemChange, onItemBlur) => {
+						if (!definition.arrayItemDefinition) return null;
+
+						return (
+							<FieldRenderer
+								definition={{
+									...definition.arrayItemDefinition,
+									name: `${index}`,
+								}}
+								value={item}
+								formState={formState}
+								onFieldChange={(path, val) => {
+									// Update array item at index
+									const newArray = [...(value as unknown[] || [])];
+									newArray[index] = val;
+									onFieldChange(fieldPath, newArray);
+								}}
+								onFieldBlur={onFieldBlur}
+								parentPath={`${fieldPath}[${index}]`}
+							/>
+						);
+					}}
+				/>
+			);
+
+		case 'union':
+			return (
+				<UnionField
+					{...commonProps}
+					renderVariant={(variant, variantValue, variantOnChange, variantOnBlur) => (
+						<FieldRenderer
+							definition={variant}
+							value={variantValue}
+							formState={formState}
+							onFieldChange={(path, val) => variantOnChange(val)}
+							onFieldBlur={onFieldBlur}
+							parentPath={fieldPath}
+						/>
+					)}
+				/>
+			);
 
 		case 'object':
 			return (
-				<ObjectField {...commonProps}>
+				<ObjectField {...commonProps} value={value as Record<string, unknown>}>
 					{definition.nestedFields?.map(nested => (
 						<FieldRenderer
 							key={nested.name}
