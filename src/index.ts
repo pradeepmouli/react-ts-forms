@@ -52,8 +52,7 @@ export { registerDecoratorOverrides, getDecoratorOverrides } from './decorators/
 
 // Utility exports
 export { validateField, validateForm, runAsyncValidators } from './components/utils/validation';
+export { generateId, getAriaProps, getErrorId } from './components/utils/accessibility';
 
 // Phase 6: Field mask utilities for template literal types
 export { generateFieldMask, applyFieldMask, type FieldMask } from './components/utils/fieldMask';
-export { validateField, validateForm, runAsyncValidators } from './components/utils/validation';
-export { generateId, getAriaProps, getErrorId } from './components/utils/accessibility';

@@ -123,7 +123,7 @@ export class TypeParser {
 					...(baseDefinition.validators || []),
 					{
 						type: 'pattern',
-						value: patternValidator.pattern,
+						pattern: new RegExp(patternValidator.pattern),
 						message: patternValidator.message,
 					},
 				];
