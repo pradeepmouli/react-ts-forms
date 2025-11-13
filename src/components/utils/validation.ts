@@ -116,7 +116,9 @@ function validateRule(
 
 		case 'email':
 			if (typeof value === 'string') {
-				const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+				// More robust email pattern that avoids catastrophic backtracking
+				// Simplified pattern for basic email validation
+				const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 				return !emailPattern.test(value) ? rule.message : null;
 			}
 			return null;

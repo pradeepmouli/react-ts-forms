@@ -48,18 +48,36 @@ export class SchemaBuilder {
 	static generateDefaultLabel(fieldName: string): string {
 		if (!fieldName) return '';
 
-		// Handle single word
+		// Handle single word (no uppercase letters)
 		if (!/[A-Z]/.test(fieldName)) {
 			return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
 		}
 
-		// Split camelCase and convert to Title Case
-		// Handle acronyms: "userId" -> "User ID", "HTMLElement" -> "HTML Element"
-		return fieldName
-			.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // Split acronyms: "HTMLElement" -> "HTML Element"
-			.replace(/([a-z\d])([A-Z])/g, '$1 $2') // Split camelCase: "userId" -> "user Id"
-			.replace(/^./, str => str.toUpperCase()) // Capitalize first letter
-			.replace(/\b\w/g, char => char.toUpperCase()); // Capitalize each word
+		// Convert camelCase to Title Case using a simpler approach
+		// This avoids potential catastrophic backtracking
+		let result = '';
+		let prevWasLower = false;
+		
+		for (let i = 0; i < fieldName.length; i++) {
+			const char = fieldName[i];
+			const isUpper = char === char.toUpperCase() && char !== char.toLowerCase();
+			
+			// Add space before uppercase letter if previous was lowercase
+			if (i > 0 && isUpper && prevWasLower) {
+				result += ' ';
+			}
+			
+			// Capitalize first letter of each word
+			if (i === 0 || result.endsWith(' ')) {
+				result += char.toUpperCase();
+			} else {
+				result += char;
+			}
+			
+			prevWasLower = !isUpper && char !== char.toUpperCase();
+		}
+		
+		return result;
 	}
 
 	/**

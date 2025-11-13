@@ -358,12 +358,22 @@ function setValueByPath(obj: any, path: string, value: unknown): void {
 	const parts = path.split('.');
 	let current = obj;
 	for (let i = 0; i < parts.length - 1; i++) {
-		if (!(parts[i] in current)) {
-			current[parts[i]] = {};
+		const part = parts[i];
+		// Guard against prototype pollution
+		if (part === '__proto__' || part === 'constructor' || part === 'prototype') {
+			throw new Error('Invalid property name');
 		}
-		current = current[parts[i]];
+		if (!(part in current)) {
+			current[part] = {};
+		}
+		current = current[part];
 	}
-	current[parts[parts.length - 1]] = value;
+	const finalPart = parts[parts.length - 1];
+	// Guard against prototype pollution
+	if (finalPart === '__proto__' || finalPart === 'constructor' || finalPart === 'prototype') {
+		throw new Error('Invalid property name');
+	}
+	current[finalPart] = value;
 }
 
 function validateFieldByPath(
