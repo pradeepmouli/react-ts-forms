@@ -14,7 +14,7 @@ import type { FieldDefinition, FieldType, ControlType } from '../types/FormSchem
  * In a real implementation, this would integrate with TypeScript Compiler API
  */
 export interface TypeInfo {
-	kind: string; // 'string' | 'number' | 'boolean' | 'date' | 'array' | 'enum' | 'union' | 'object' | 'recursive'
+	kind: string; // 'string' | 'number' | 'boolean' | 'date' | 'array' | 'enum' | 'union' | 'object' | 'recursive' | 'template-literal'
 	name?: string;
 	properties?: Record<string, TypeInfo>;
 	elementType?: TypeInfo; // for arrays
@@ -24,6 +24,7 @@ export interface TypeInfo {
 	readonly?: boolean;
 	recursiveRef?: string; // T114: Reference to parent type for recursive types
 	genericParams?: Record<string, TypeInfo>; // T123: Generic type parameters
+	templatePattern?: string; // Phase 6: Template literal pattern (e.g., 'user-${number}', '${string}@${string}')
 }
 
 /**
@@ -107,6 +108,28 @@ export class TypeParser {
 			baseDefinition.enumValues = typeInfo.enumValues;
 		}
 
+		// Phase 6: Handle template literal types
+		if (typeInfo.kind === 'template-literal' && typeInfo.templatePattern) {
+			// Store the template pattern for validation and field mask generation
+			baseDefinition.metadata = {
+				...baseDefinition.metadata,
+				templatePattern: typeInfo.templatePattern,
+			};
+			
+			// Generate pattern validation from template literal
+			const patternValidator = this.generatePatternFromTemplate(typeInfo.templatePattern);
+			if (patternValidator) {
+				baseDefinition.validators = [
+					...(baseDefinition.validators || []),
+					{
+						type: 'pattern',
+						value: patternValidator.pattern,
+						message: patternValidator.message,
+					},
+				];
+			}
+		}
+
 		// T058: Handle union types (Phase 4)
 		if (typeInfo.kind === 'union' && typeInfo.unionVariants) {
 			baseDefinition.unionVariants = typeInfo.unionVariants.map((variant, idx) =>
@@ -121,6 +144,53 @@ export class TypeParser {
 		}
 
 		return baseDefinition;
+	}
+
+	/**
+	 * Phase 6: Generate regex pattern from template literal type
+	 * Converts TypeScript template literal patterns to regex for validation
+	 */
+	private static generatePatternFromTemplate(template: string): { pattern: string; message: string } | null {
+		// Common template patterns and their regex equivalents
+		const patterns: Record<string, string> = {
+			'${string}': '.*',
+			'${number}': '\\d+',
+			'${bigint}': '\\d+',
+			'${boolean}': '(true|false)',
+		};
+
+		let regex = template;
+		let hasPattern = false;
+
+		// Replace template placeholders with regex patterns
+		for (const [placeholder, pattern] of Object.entries(patterns)) {
+			if (regex.includes(placeholder)) {
+				hasPattern = true;
+				regex = regex.replace(new RegExp(this.escapeRegex(placeholder), 'g'), pattern);
+			}
+		}
+
+		if (!hasPattern) {
+			// No template placeholders, just a literal string
+			return {
+				pattern: `^${this.escapeRegex(template)}$`,
+				message: `Value must be exactly "${template}"`,
+			};
+		}
+
+		// Escape literal parts of the template
+		// This is a simplified implementation - real one would need more sophisticated parsing
+		return {
+			pattern: `^${regex}$`,
+			message: `Value must match pattern: ${template}`,
+		};
+	}
+
+	/**
+	 * Escape special regex characters
+	 */
+	private static escapeRegex(str: string): string {
+		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	}
 
 	/**
@@ -159,6 +229,9 @@ export class TypeParser {
 		switch (typeInfo.kind) {
 			case 'string':
 				return 'string';
+			case 'template-literal':
+				// Template literals are treated as strings with pattern validation
+				return 'string';
 			case 'number':
 				return 'number';
 			case 'boolean':
@@ -185,6 +258,9 @@ export class TypeParser {
 	private static resolveControlType(typeInfo: TypeInfo): ControlType {
 		switch (typeInfo.kind) {
 			case 'string':
+				return 'text';
+			case 'template-literal':
+				// Template literals use text input with pattern validation
 				return 'text';
 			case 'number':
 				return 'number';

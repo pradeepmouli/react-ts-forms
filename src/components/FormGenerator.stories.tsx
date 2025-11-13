@@ -524,3 +524,65 @@ export const WithReadonlyFields: Story = {
 		},
 	},
 };
+
+/**
+ * Phase 6: Template literal types example
+ * Demonstrates template literal type patterns for validation and field masks
+ */
+export const WithTemplateLiteralTypes: Story = {
+	args: {
+		schema: (() => {
+			// User ID must match pattern: user-{number}
+			const userIdField = TypeParser.parseType('userId', {
+				kind: 'template-literal',
+				templatePattern: 'user-${number}',
+				required: true,
+			});
+			userIdField.placeholder = 'e.g., user-123';
+			userIdField.helpText = 'Must match pattern: user-{number}';
+
+			// SKU must match pattern: SKU-{uppercase}-{number}
+			const skuField = TypeParser.parseType('productSku', {
+				kind: 'template-literal',
+				templatePattern: 'SKU-${string}-${number}',
+				required: true,
+			});
+			skuField.placeholder = 'e.g., SKU-LAPTOP-4567';
+			skuField.helpText = 'Must match pattern: SKU-{text}-{number}';
+
+			// Version must match semantic versioning
+			const versionField = TypeParser.parseType('version', {
+				kind: 'template-literal',
+				templatePattern: '${number}.${number}.${number}',
+				required: true,
+			});
+			versionField.placeholder = 'e.g., 1.2.3';
+			versionField.helpText = 'Semantic version: major.minor.patch';
+
+			// Status flag
+			const statusField = TypeParser.parseType('active', {
+				kind: 'template-literal',
+				templatePattern: '${boolean}',
+				required: false,
+			});
+			statusField.helpText = 'Must be "true" or "false"';
+
+			const fields = [userIdField, skuField, versionField, statusField];
+
+			return SchemaBuilder.buildSchema('TemplatePatterns', fields, {
+				title: 'Template Literal Type Patterns',
+				description: 'Fields with template literal type validation (try invalid patterns to see validation)',
+			});
+		})(),
+		initialValues: {
+			userId: 'user-42',
+			productSku: 'SKU-MOUSE-789',
+			version: '2.1.0',
+			active: 'true',
+		},
+		onSubmit: (values) => {
+			console.log('Form submitted:', values);
+			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
+		},
+	},
+};

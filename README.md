@@ -146,6 +146,44 @@ const schema = SchemaBuilder.buildSchema('User', [
 
 Readonly fields render as disabled inputs with visual indicators.
 
+### Template Literal Types
+
+Use TypeScript template literal types for pattern-based validation and field masks:
+
+```ts
+// User ID pattern: user-{number}
+const userIdField = TypeParser.parseType('userId', {
+  kind: 'template-literal',
+  templatePattern: 'user-${number}',
+  required: true,
+});
+
+// SKU pattern: SKU-{text}-{number}
+const skuField = TypeParser.parseType('sku', {
+  kind: 'template-literal',
+  templatePattern: 'SKU-${string}-${number}',
+  required: true,
+});
+
+// Semantic version: major.minor.patch
+const versionField = TypeParser.parseType('version', {
+  kind: 'template-literal',
+  templatePattern: '${number}.${number}.${number}',
+  required: true,
+});
+```
+
+**Supported placeholders:**
+- `${string}` - Any string (.*  in regex)
+- `${number}` - Numeric digits (\d+ in regex)
+- `${bigint}` - Numeric digits (\d+ in regex)
+- `${boolean}` - Literal "true" or "false"
+
+Template patterns automatically generate:
+- Pattern validation (regex)
+- Helpful error messages
+- Field masks (future enhancement)
+
 ### Generic Type Resolution
 
 TypeParser can resolve generic type parameters:
