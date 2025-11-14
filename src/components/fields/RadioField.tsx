@@ -5,7 +5,7 @@
 
 import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
-import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
+import { generateId, getErrorId } from '../utils/accessibility';
 
 const RadioFieldComponent: React.FC<FieldProps<unknown>> = ({
 	definition,

@@ -48,9 +48,6 @@ export class TypeParser {
 		context: ParseContext = { visitedTypes: new Set(), depth: 0 }
 	): FieldDefinition {
 		// T114: Check for recursive reference
-		const typeName = typeInfo.name || fieldName;
-		const fullPath = parentPath ? `${parentPath}.${fieldName}` : fieldName;
-		
 		// Detect recursion
 		if (typeInfo.kind === 'object' && typeInfo.name && context.visitedTypes.has(typeInfo.name)) {
 			// Recursive reference detected

@@ -218,7 +218,7 @@ describe('Comprehensive Accessibility Suite', () => {
 			],
 		};
 
-		const { container} = render(
+		const { container } = render(
 			<FormGenerator
 				schema={schema}
 				initialValues={{}}
