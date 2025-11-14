@@ -12,7 +12,7 @@ export interface ArrayFieldProps extends FieldProps<unknown[]> {
 	renderItem: (item: unknown, index: number, onItemChange: (value: unknown) => void, onItemBlur: () => void) => React.ReactNode;
 }
 
-export const ArrayField: React.FC<ArrayFieldProps> = ({
+const ArrayFieldComponent: React.FC<ArrayFieldProps> = ({
 	definition,
 	value = [],
 	onChange,
@@ -147,7 +147,10 @@ export const ArrayField: React.FC<ArrayFieldProps> = ({
 	);
 };
 
-ArrayField.displayName = 'ArrayField';
+ArrayFieldComponent.displayName = 'ArrayField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const ArrayField = React.memo(ArrayFieldComponent);
 
 /**
  * Get default value for an array item based on its type

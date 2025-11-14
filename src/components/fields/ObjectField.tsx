@@ -10,7 +10,7 @@ export interface ObjectFieldProps extends FieldProps<Record<string, unknown>> {
 	children?: React.ReactNode;
 }
 
-export const ObjectField: React.FC<ObjectFieldProps> = ({
+const ObjectFieldComponent: React.FC<ObjectFieldProps> = ({
 	definition,
 	children,
 }) => {
@@ -32,4 +32,7 @@ export const ObjectField: React.FC<ObjectFieldProps> = ({
 	);
 };
 
-ObjectField.displayName = 'ObjectField';
+ObjectFieldComponent.displayName = 'ObjectField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const ObjectField = React.memo(ObjectFieldComponent);

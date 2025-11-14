@@ -7,7 +7,7 @@ import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
 import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
 
-export const SelectField: React.FC<FieldProps<unknown>> = ({
+const SelectFieldComponent: React.FC<FieldProps<unknown>> = ({
 	definition,
 	value,
 	onChange,
@@ -84,4 +84,7 @@ export const SelectField: React.FC<FieldProps<unknown>> = ({
 	);
 };
 
-SelectField.displayName = 'SelectField';
+SelectFieldComponent.displayName = 'SelectField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const SelectField = React.memo(SelectFieldComponent);

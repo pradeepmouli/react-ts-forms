@@ -7,7 +7,7 @@ import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
 import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
 
-export const TextAreaField: React.FC<FieldProps<string>> = ({
+const TextAreaFieldComponent: React.FC<FieldProps<string>> = ({
 	definition,
 	value,
 	onChange,
@@ -66,4 +66,7 @@ export const TextAreaField: React.FC<FieldProps<string>> = ({
 	);
 };
 
-TextAreaField.displayName = 'TextAreaField';
+TextAreaFieldComponent.displayName = 'TextAreaField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const TextAreaField = React.memo(TextAreaFieldComponent);

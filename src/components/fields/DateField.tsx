@@ -7,7 +7,7 @@ import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
 import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
 
-export const DateField: React.FC<FieldProps<Date | string>> = ({
+const DateFieldComponent: React.FC<FieldProps<Date | string>> = ({
 	definition,
 	value,
 	onChange,
@@ -86,4 +86,7 @@ export const DateField: React.FC<FieldProps<Date | string>> = ({
 	);
 };
 
-DateField.displayName = 'DateField';
+DateFieldComponent.displayName = 'DateField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const DateField = React.memo(DateFieldComponent);

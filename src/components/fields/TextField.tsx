@@ -9,7 +9,7 @@ import type { FieldProps } from '../../types/FieldProps';
 import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
 import { generateFieldMask, type FieldMask } from '../utils/fieldMask';
 
-export const TextField: React.FC<FieldProps<string>> = ({
+const TextFieldComponent: React.FC<FieldProps<string>> = ({
 	definition,
 	value,
 	onChange,
@@ -114,4 +114,7 @@ export const TextField: React.FC<FieldProps<string>> = ({
 	);
 };
 
-TextField.displayName = 'TextField';
+TextFieldComponent.displayName = 'TextField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const TextField = React.memo(TextFieldComponent);

@@ -7,7 +7,7 @@ import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
 import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
 
-export const RadioField: React.FC<FieldProps<unknown>> = ({
+const RadioFieldComponent: React.FC<FieldProps<unknown>> = ({
 	definition,
 	value,
 	onChange,
@@ -19,17 +19,11 @@ export const RadioField: React.FC<FieldProps<unknown>> = ({
 	const groupId = React.useMemo(() => generateId('radio-group'), []);
 	const hasErrors = touched && errors.length > 0;
 
-	const ariaProps = getAriaProps({
-		fieldPath: definition.name,
-		describedByErrors: true,
-		hasErrors,
-		required: definition.required,
-	});
-
+	// Don't apply ARIA props directly to fieldset (not all are valid for fieldset)
 	return (
 		<fieldset
 			className={`rtsf-field rtsf-radio-field ${definition.className || ''}`}
-			{...ariaProps}
+			aria-describedby={hasErrors ? getErrorId(definition.name) : undefined}
 		>
 			<legend className="rtsf-label">
 				{definition.label}
@@ -40,7 +34,7 @@ export const RadioField: React.FC<FieldProps<unknown>> = ({
 				<div className="rtsf-help-text">{definition.helpText}</div>
 			)}
 
-			<div className="rtsf-radio-group" role="radiogroup">
+			<div className="rtsf-radio-group" role="radiogroup" aria-required={definition.required}>
 				{definition.enumValues?.map((option, idx) => {
 					const radioId = `${groupId}-${idx}`;
 					const isChecked = value === option.value;
@@ -57,6 +51,7 @@ export const RadioField: React.FC<FieldProps<unknown>> = ({
 								onBlur={onBlur}
 								disabled={definition.readonly}
 								className="rtsf-radio-input"
+								aria-invalid={hasErrors}
 							/>
 							<label htmlFor={radioId} className="rtsf-radio-label">
 								{option.label}
@@ -83,4 +78,7 @@ export const RadioField: React.FC<FieldProps<unknown>> = ({
 	);
 };
 
-RadioField.displayName = 'RadioField';
+RadioFieldComponent.displayName = 'RadioField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const RadioField = React.memo(RadioFieldComponent);

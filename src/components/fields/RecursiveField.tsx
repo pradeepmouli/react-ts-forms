@@ -18,7 +18,7 @@ export interface RecursiveFieldProps extends FieldProps<Record<string, unknown>>
 	children?: React.ReactNode;
 }
 
-export const RecursiveField: React.FC<RecursiveFieldProps> = ({
+const RecursiveFieldComponent: React.FC<RecursiveFieldProps> = ({
 	definition,
 	isExpanded,
 	onToggle,
@@ -76,4 +76,7 @@ export const RecursiveField: React.FC<RecursiveFieldProps> = ({
 	);
 };
 
-RecursiveField.displayName = 'RecursiveField';
+RecursiveFieldComponent.displayName = 'RecursiveField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const RecursiveField = React.memo(RecursiveFieldComponent);

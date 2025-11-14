@@ -7,7 +7,7 @@ import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
 import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
 
-export const NumberField: React.FC<FieldProps<number>> = ({
+const NumberFieldComponent: React.FC<FieldProps<number>> = ({
 	definition,
 	value,
 	onChange,
@@ -69,4 +69,7 @@ export const NumberField: React.FC<FieldProps<number>> = ({
 	);
 };
 
-NumberField.displayName = 'NumberField';
+NumberFieldComponent.displayName = 'NumberField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const NumberField = React.memo(NumberFieldComponent);

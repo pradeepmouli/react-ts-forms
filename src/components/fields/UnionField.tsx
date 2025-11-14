@@ -13,7 +13,7 @@ export interface UnionFieldProps extends FieldProps<unknown> {
 	renderVariant: (variant: FieldDefinition, value: unknown, onChange: (value: unknown) => void, onBlur: () => void) => React.ReactNode;
 }
 
-export const UnionField: React.FC<UnionFieldProps> = ({
+const UnionFieldComponent: React.FC<UnionFieldProps> = ({
 	definition,
 	value,
 	onChange,
@@ -125,4 +125,7 @@ export const UnionField: React.FC<UnionFieldProps> = ({
 	);
 };
 
-UnionField.displayName = 'UnionField';
+UnionFieldComponent.displayName = 'UnionField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const UnionField = React.memo(UnionFieldComponent);

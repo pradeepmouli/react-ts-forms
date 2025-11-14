@@ -7,7 +7,7 @@ import * as React from 'react';
 import type { FieldProps } from '../../types/FieldProps';
 import { generateId, getAriaProps, getErrorId } from '../utils/accessibility';
 
-export const CheckboxField: React.FC<FieldProps<boolean>> = ({
+const CheckboxFieldComponent: React.FC<FieldProps<boolean>> = ({
 	definition,
 	value,
 	onChange,
@@ -67,4 +67,7 @@ export const CheckboxField: React.FC<FieldProps<boolean>> = ({
 	);
 };
 
-CheckboxField.displayName = 'CheckboxField';
+CheckboxFieldComponent.displayName = 'CheckboxField';
+
+// Performance optimization: Memoize component to prevent unnecessary re-renders
+export const CheckboxField = React.memo(CheckboxFieldComponent);
