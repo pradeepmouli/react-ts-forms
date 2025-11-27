@@ -50,7 +50,7 @@ describe('NumberField', () => {
 	it('should render number input with type="number"', () => {
 		const props = createFieldProps();
 		render(<NumberField {...props} />);
-		
+
 		const input = screen.getByRole('spinbutton', { name: /age/i });
 		expect(input).toBeInTheDocument();
 		expect(input).toHaveAttribute('type', 'number');
@@ -59,10 +59,10 @@ describe('NumberField', () => {
 	it('should call onChange with numeric value when user types', () => {
 		const onChange = vi.fn();
 		const props = createFieldProps({ onChange, value: 0 });
-		
+
 		render(<NumberField {...props} />);
 		const input = screen.getByRole('spinbutton');
-		
+
 		fireEvent.change(input, { target: { value: '42' } });
 		expect(onChange).toHaveBeenCalledWith(42);
 	});
@@ -70,10 +70,10 @@ describe('NumberField', () => {
 	it('should call onChange with null when input is cleared', () => {
 		const onChange = vi.fn();
 		const props = createFieldProps({ onChange });
-		
+
 		render(<NumberField {...props} />);
 		const input = screen.getByRole('spinbutton');
-		
+
 		fireEvent.change(input, { target: { value: '' } });
 		expect(onChange).toHaveBeenCalledWith(null);
 	});
@@ -83,7 +83,7 @@ describe('NumberField', () => {
 			errors: ['Age must be at least 18'],
 			touched: true,
 		});
-		
+
 		render(<NumberField {...props} />);
 		expect(screen.getByText('Age must be at least 18')).toBeInTheDocument();
 		expect(screen.getByRole('alert')).toBeInTheDocument();
@@ -94,7 +94,7 @@ describe('NumberField', () => {
 			errors: ['Age must be at least 18'],
 			touched: false,
 		});
-		
+
 		render(<NumberField {...props} />);
 		expect(screen.queryByText('Age must be at least 18')).not.toBeInTheDocument();
 	});
@@ -102,7 +102,7 @@ describe('NumberField', () => {
 	it('should apply aria-required when field is required', () => {
 		const props = createFieldProps();
 		render(<NumberField {...props} />);
-		
+
 		const input = screen.getByRole('spinbutton');
 		expect(input).toHaveAttribute('aria-required', 'true');
 	});
@@ -114,7 +114,7 @@ describe('NumberField', () => {
 				readonly: true,
 			},
 		});
-		
+
 		render(<NumberField {...props} />);
 		const input = screen.getByRole('spinbutton');
 		expect(input).toBeDisabled();
@@ -127,7 +127,7 @@ describe('NumberField', () => {
 				placeholder: 'Enter your age',
 			},
 		});
-		
+
 		render(<NumberField {...props} />);
 		const input = screen.getByRole('spinbutton');
 		expect(input).toHaveAttribute('placeholder', 'Enter your age');
@@ -140,7 +140,7 @@ describe('NumberField', () => {
 				helpText: 'Must be 18 or older',
 			},
 		});
-		
+
 		render(<NumberField {...props} />);
 		expect(screen.getByText('Must be 18 or older')).toBeInTheDocument();
 	});
@@ -154,7 +154,7 @@ describe('NumberField', () => {
 			errors: ['Age must be at least 18'],
 			touched: true,
 		});
-		
+
 		render(<NumberField {...props} />);
 		expect(screen.queryByText('Must be 18 or older')).not.toBeInTheDocument();
 		expect(screen.getByText('Age must be at least 18')).toBeInTheDocument();
@@ -164,7 +164,7 @@ describe('NumberField', () => {
 		const props = createFieldProps({
 			validating: true,
 		});
-		
+
 		render(<NumberField {...props} />);
 		expect(screen.getByText('Validating...')).toBeInTheDocument();
 	});
@@ -173,20 +173,20 @@ describe('NumberField', () => {
 		const onBlur = vi.fn();
 		const props = createFieldProps({ onBlur });
 		const user = userEvent.setup();
-		
+
 		render(<NumberField {...props} />);
 		const input = screen.getByRole('spinbutton');
-		
+
 		await user.click(input);
 		await user.tab();
-		
+
 		expect(onBlur).toHaveBeenCalled();
 	});
 
 	it('should display required asterisk when field is required', () => {
 		const props = createFieldProps();
 		render(<NumberField {...props} />);
-		
+
 		const label = screen.getByText(/age/i);
 		expect(label).toBeInTheDocument();
 		// Check that asterisk exists within the label's parent container
@@ -194,4 +194,3 @@ describe('NumberField', () => {
 		expect(screen.getByText('*')).toHaveAttribute('aria-label', 'required');
 	});
 });
-
