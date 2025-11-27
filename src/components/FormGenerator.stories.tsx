@@ -4,6 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import { FormGenerator } from './FormGenerator';
 import { TypeParser, SchemaBuilder } from '../generator';
 import type { TypeInfo } from '../generator/TypeParser';
@@ -45,10 +46,8 @@ export const SimpleUserProfile: Story = {
 			email: 'ada@example.com',
 			isActive: true,
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -71,10 +70,8 @@ export const WithDateField: Story = {
 			name: 'Grace Hopper',
 			birthdate: new Date('1906-12-09'),
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -107,10 +104,8 @@ export const WithEnumSelect: Story = {
 			name: 'Margaret Hamilton',
 			role: 'admin',
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -143,10 +138,8 @@ export const WithEnumRadio: Story = {
 			name: 'Fix bug',
 			priority: 2,
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -174,10 +167,8 @@ export const WithArrayField: Story = {
 			name: 'React TypeScript Forms',
 			tags: ['react', 'typescript', 'forms'],
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -212,10 +203,8 @@ export const WithNestedObject: Story = {
 				zipCode: '23669',
 			},
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -269,10 +258,8 @@ export const ComplexForm: Story = {
 				email: 'jean@example.com',
 			},
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -287,7 +274,7 @@ export const WithControlTypeDecorator: Story = {
 			const titleField = TypeParser.parseType('title', { kind: 'string', required: true });
 			// Simulate @ControlType('textarea') decorator
 			titleField.controlType = 'textarea';
-			
+
 			const descriptionField = TypeParser.parseType('description', { kind: 'string', required: false });
 			descriptionField.controlType = 'textarea';
 			descriptionField.placeholder = 'Enter a detailed description...';
@@ -304,10 +291,8 @@ export const WithControlTypeDecorator: Story = {
 			title: 'Understanding React Forms',
 			description: 'This article explores the various approaches to building forms in React applications.',
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -372,10 +357,8 @@ export const WithCustomValidation: Story = {
 			password: '',
 			email: '',
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Registration successful!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -397,7 +380,7 @@ export const WithCustomStyling: Story = {
 			const bioField = TypeParser.parseType('bio', { kind: 'string', required: false });
 			bioField.controlType = 'textarea';
 			bioField.className = 'custom-bio-field';
-			bioField.style = { 
+			bioField.style = {
 				backgroundColor: '#fffacd',
 				fontFamily: 'Georgia, serif',
 				fontSize: '16px',
@@ -415,10 +398,8 @@ export const WithCustomStyling: Story = {
 			email: 'grace@example.com',
 			bio: 'Computer scientist and United States Navy rear admiral.',
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -437,7 +418,7 @@ export const WithRecursiveTypes: Story = {
 					label: { kind: 'string', required: true },
 					value: { kind: 'string', required: true },
 					// Recursive reference - children is an array of TreeNode
-					children: { 
+					children: {
 						kind: 'array',
 						elementType: {
 							kind: 'object',
@@ -476,10 +457,8 @@ export const WithRecursiveTypes: Story = {
 				],
 			},
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -494,7 +473,7 @@ export const WithReadonlyFields: Story = {
 			idField.helpText = 'This field is read-only';
 
 			const usernameField = TypeParser.parseType('username', { kind: 'string', required: true });
-			
+
 			const emailField = TypeParser.parseType('email', { kind: 'string', required: true, readonly: true });
 			emailField.helpText = 'Email cannot be changed';
 
@@ -518,10 +497,8 @@ export const WithReadonlyFields: Story = {
 			email: 'ada@example.com',
 			roles: ['developer', 'admin'],
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
 
@@ -577,9 +554,7 @@ export const WithTemplateLiteralTypes: Story = {
 			version: '2.1.0',
 			phone: '',
 		},
-		onSubmit: (values) => {
-			console.log('Form submitted:', values);
-			alert(`Form submitted!\n${JSON.stringify(values, null, 2)}`);
-		},
+		onSubmit: fn(),
+		onChange: fn(),
 	},
 };
